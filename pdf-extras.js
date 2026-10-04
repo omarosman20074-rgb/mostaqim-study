@@ -1,3 +1,5 @@
+
+Pdf extras · JS
 (function () {
     function mergeLineSegments(segments, vertical) {
         const sorted = segments.slice().sort((a, b) => {
@@ -302,3 +304,4 @@
         return section;
     };
 })();
+ 
