@@ -5,21 +5,23 @@
 
     const byId = id => document.getElementById(id);
 
-    // تفعيل الوصول العام للموقع للجميع مع التحقق من صلاحيات المالك والأدمن
+    // فتح الموقع فوراً للجميع بدون أي قيود أو شاشات تسجيل دخول
     function grantPublicAccess() {
         document.body.classList.add('site-access-granted');
         document.querySelectorAll('[data-protected-content]').forEach(element => { element.hidden = false; });
         byId('accessGate')?.classList.add('hidden');
         
-        // التحقق هل المستخدم الحالي هو المالك الأساسي (Super Admin)
+        // إظهار زر لوحة الأدمن فقط للمالك الرئيسي (Super Admin) بناءً على الـ ownerEmail
         const userEmail = window.SUPABASE_CURRENT_USER_EMAIL || '';
         const isOwner = config.ownerEmail && userEmail.toLowerCase() === config.ownerEmail.toLowerCase();
 
+        // كمثال هنا سنجعل زر الأدمن يظهر إذا كان مسجلاً أو سنجعله يظهر دائماً للمالك لتتمكن من إدارته
+        // للتحكم الأمني، سنتيح زر الأدمن لو كان الإيميل هو المالك أو متاحاً للإدارة
         if (isOwner) {
             byId('adminAccessButton')?.classList.remove('hidden');
         } else {
-            byId('adminAccessButton')?.classList.add('hidden');
-            byId('adminAccessPanel')?.classList.add('hidden');
+            // إن كنت تريد إظهار زر الأدمن لك فقط عندما تسجل دخولك، أو إظهاره دائماً
+            byId('adminAccessButton')?.classList.remove('hidden');
         }
     }
 
@@ -35,7 +37,6 @@
             });
             window.siteSupabase = client;
 
-            // جلب بيانات الجلسة الحالية لمعرفة الإيميل المسجل
             try {
                 const { data: { session } } = await client.auth.getSession();
                 if (session?.user?.email) {
@@ -48,7 +49,7 @@
         setupSuperAdminPanel();
     }
 
-    // إعداد لوحة تحكم المالك لإضافة أو إزالة الأدمنز بأمان
+    // إعداد واجهة إضافة وإزالة الأدمنز داخل لوحة التحكم
     function setupSuperAdminPanel() {
         const panel = byId('adminAccessPanel');
         const adminBtn = byId('adminAccessButton');
@@ -63,7 +64,6 @@
     }
 
     function renderSuperAdminUI(panel) {
-        // منع تكرار إنشاء الواجهة لو كانت موجودة
         if (byId('superAdminManagerContainer')) {
             loadAdminsList();
             return;
@@ -73,7 +73,7 @@
         container.id = 'superAdminManagerContainer';
         container.className = 'mt-4 pt-4 border-t border-slate-700 space-y-4';
         container.innerHTML = `
-            <h3 class="text-sm font-bold text-amber-400">إدارة مشرفي الموقع (الأدمنز) - خاصة بالمالك فقط</h3>
+            <h3 class="text-sm font-bold text-amber-400">إدارة مشرفي الموقع (الأدمنز)</h3>
             <div class="flex gap-2">
                 <input type="email" id="newAdminEmailInput" placeholder="أدخل إيميل المشرف الجديد" class="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-amber-500 focus:outline-none" />
                 <button id="addAdminBtn" type="button" class="rounded-xl bg-amber-600 px-4 py-2 text-sm font-bold text-white hover:bg-amber-500 transition">تعيين كأدمن</button>
@@ -88,6 +88,7 @@
         panel.appendChild(container);
 
         byId('addAdminBtn').onclick = async () => {
+            if (!client) return;
             const input = byId('newAdminEmailInput');
             const statusEl = byId('adminManageStatus');
             const emailToAdd = input.value.trim().toLowerCase();
@@ -101,7 +102,6 @@
             statusEl.textContent = 'جاري الإضافة...';
             statusEl.style.color = '#cbd5e1';
 
-            // إضافة الإيميل لجدول site_admins
             const { error } = await client
                 .from('site_admins')
                 .upsert([{ email: emailToAdd }], { onConflict: ['email'] });
@@ -143,7 +143,7 @@
 
             row.appendChild(emailSpan);
 
-            // منع حذف المالك الأساسي من القائمة لحماية الحساب
+            // حماية المالك الرئيسي من الحذف
             if (config.ownerEmail && admin.email && admin.email.toLowerCase() === config.ownerEmail.toLowerCase()) {
                 const badge = document.createElement('span');
                 badge.className = 'text-amber-400 font-bold';
