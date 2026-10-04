@@ -93,7 +93,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
 
-    <!-- شاشة تسجيل الدخول القديمة (مخفية تماماً) -->
+    <!-- شاشة تسجيل الدخول القديمة (مخفية) -->
     <section id="accessGate" class="hidden" aria-hidden="true"></section>
 
     <!-- الشريط العلوي للموقع -->
@@ -134,7 +134,7 @@
 
         <!-- زر ولوحة إدارة الأدمن -->
         <section class="mb-6">
-            <button id="adminAccessButton" class="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-bold text-amber-300 hover:bg-amber-500/20 transition" type="button">
+            <button id="adminAccessButton" class="hidden rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-bold text-amber-300 hover:bg-amber-500/20 transition" type="button">
                 <i class="fa-solid fa-shield-halved ml-1"></i> إدارة مشرفي الموقع
             </button>
             <div id="adminAccessPanel" class="hidden mt-3 rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-xl"></div>
@@ -362,7 +362,7 @@
             if (t.length < 3 || t.length > 100 || /[.!؟؛،]$/.test(t)) return false;
             return /^(?:المحاضرة|الفصل|الباب|الوحدة|الجزء|مقدمة|أهداف|أهمية|تعريف|خصائص|أنواع|أقسام|عناصر|مراحل|أولاً|ثانياً|ثالثاً|رابعاً|خامساً|\d+[.)-]|[٠-٩]+[.)-])/u.test(t);
         }
-        function renderLessonText(container, text, highlights = []) {
+        function renderLessonText(container, text) {
             const content = document.createElement('div');
             content.className = 'lesson-copy';
             content.style.setProperty('--lesson-font-size', `${lessonTextSize}px`);
