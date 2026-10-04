@@ -66,18 +66,6 @@
         .lesson-edit-status { color: #94a3b8; font-size: .85rem; }
         .lesson-edit-status[data-kind="error"] { color: #fca5a5; }
         .lesson-edit-input { min-height: 14rem; width: 100%; resize: vertical; border: 1px solid #475569; border-radius: .65rem; background: #0f172a; color: #f8fafc; padding: .85rem; font: inherit; line-height: 1.9; }
-        .lesson-highlight-palette { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-        .lesson-highlight-label { color: #94a3b8; font-size: .85rem; }
-        .lesson-highlight-color { width: 2rem; height: 2rem; padding: 0 !important; border: 2px solid rgb(255 255 255 / .3); border-radius: 50% !important; }
-        .lesson-highlight-color[aria-pressed="true"] { outline: 2px solid #fff; outline-offset: 2px; }
-        .lesson-highlight-clear { padding: .4rem .65rem; border: 1px solid #64748b; border-radius: .55rem; background: #334155; color: #f8fafc; font-size: .8rem; }
-        body.light-theme .lesson-highlight-label { color: #475569; }
-        body.light-theme .lesson-highlight-color { border-color: rgb(15 23 42 / .35); }
-        body.light-theme .lesson-highlight-color[aria-pressed="true"] { outline-color: #0f172a; }
-        body.light-theme .lesson-highlight-clear { border-color: #cbd5e1; background: #e2e8f0; color: #1e293b; }
-        body.light-theme .lesson-edit-panel { border-color: #cbd5e1; }
-        body.light-theme .lesson-edit-cancel { background: #e2e8f0; color: #334155; }
-        body.light-theme .lesson-edit-input { border-color: #cbd5e1; background: #fff; color: #1e293b; }
         .pdf-extra-content { display: grid; gap: 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #334155; }
         .pdf-extra-heading { color: #fbbf24; font-size: .95rem; font-weight: 700; }
         .pdf-extra-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: .85rem; }
@@ -97,57 +85,19 @@
         body.light-theme .pdf-extra-table th, body.light-theme .pdf-extra-table td { border-color: #cbd5e1; }
         body.light-theme .pdf-extra-table th { color: #1e3a8a; background: #dbeafe; }
         [data-protected-content][hidden] { display: none !important; }
-        .access-gate { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; overflow-y: auto; padding: 1rem; background: #0f172a; }
-        .access-card { width: 100%; max-width: 28rem; border: 1px solid #334155; border-radius: 1rem; background: #1e293b; padding: 1.5rem; box-shadow: 0 24px 60px rgb(0 0 0 / .3); }
-        .access-input { width: 100%; border: 1px solid #475569; border-radius: .65rem; background: #0f172a; color: #f8fafc; padding: .75rem 1rem; }
-        .access-state { border-radius: .65rem; background: #0f172a; padding: .75rem 1rem; color: #cbd5e1; }
-        .access-state[data-kind="error"] { color: #fecaca; border: 1px solid #ef444455; }
-        .access-request-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; border-bottom: 1px solid #334155; padding: .9rem 0; }
-        .access-request-row strong, .access-request-row span { display: block; overflow-wrap: anywhere; }
-        .access-request-row span { color: #94a3b8; font-size: .8rem; }
-        .access-request-actions { display: flex; gap: .5rem; }
-        .access-request-actions button { border-radius: .5rem; padding: .45rem .7rem; color: white; font-size: .8rem; }
-        .access-approve { background: #15803d; }
-        .access-reject { background: #b91c1c; }
-        .access-neutral { background: #475569; }
-        body.light-theme .access-gate { background: #f1f5f9; }
-        body.light-theme .access-card { border-color: #cbd5e1; background: white; }
-        body.light-theme .access-input, body.light-theme .access-state { border-color: #cbd5e1; background: #f8fafc; color: #1e293b; }
-        body.light-theme .access-request-row { border-color: #cbd5e1; }
         .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e3a8a; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         .pdf-page { width: 100%; height: auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
 
-    <!-- شاشة طلب الوصول المصممة خصيصاً للموقع -->
-    <section id="accessGate" class="access-gate" aria-labelledby="accessGateTitle">
-        <div class="access-card space-y-5">
-            <div>
-                <p class="text-xs font-bold text-blue-400 mb-2">موقع خاص</p>
-                <h1 id="accessGateTitle" class="text-2xl font-black text-white">تسجيل الدخول وطلب الوصول</h1>
-                <p class="text-sm text-slate-300 mt-2">الدخول متاح للحسابات التي يوافق عليها مسؤول الموقع.</p>
-            </div>
-            <form id="accessForm" class="space-y-3">
-                <label for="accessEmail" class="block text-sm font-semibold text-slate-200">البريد الإلكتروني</label>
-                <input id="accessEmail" class="access-input" type="email" autocomplete="email" required placeholder="name@example.com">
-                <button id="sendAccessLink" class="w-full rounded-xl bg-blue-600 px-4 py-3 font-bold text-white hover:bg-blue-500 transition" type="submit">إرسال رابط التحقق</button>
-            </form>
-            <div id="accessSessionActions" class="hidden space-y-3">
-                <p class="text-sm text-slate-300">الحساب: <span id="accessAccountEmail" dir="ltr"></span></p>
-                <div class="flex gap-2">
-                    <button id="refreshAccessButton" class="flex-1 rounded-xl bg-slate-700 px-3 py-2 text-sm text-white" type="button">تحديث الحالة</button>
-                    <button id="signOutButton" class="rounded-xl border border-slate-600 px-3 py-2 text-sm text-slate-200" type="button">تسجيل الخروج</button>
-                </div>
-            </div>
-            <p id="accessState" class="access-state text-sm" role="status" aria-live="polite"></p>
-        </div>
-    </section>
+    <!-- شاشة تسجيل الدخول القديمة (مخفية تماماً) -->
+    <section id="accessGate" class="hidden" aria-hidden="true"></section>
 
-    <!-- شريط التنقل العلوي للموقع (محمي) -->
-    <header data-protected-content hidden class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md bg-opacity-90">
+    <!-- الشريط العلوي للموقع -->
+    <header data-protected-content class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md bg-opacity-90">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <button type="button" class="flex items-center space-x-3 space-x-reverse text-right" onclick="showHome()" aria-label="العودة إلى الرئيسية">
                 <div class="w-12 h-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
@@ -164,11 +114,8 @@
                 <button onclick="openAboutModal()" class="px-4 py-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition">عن المنصة</button>
             </nav>
             <div class="flex items-center gap-2">
-                <button id="themeToggle" onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white transition" aria-label="تفعيل الإضاءة الفاتحة" title="تفعيل الإضاءة الفاتحة" aria-pressed="false">
+                <button id="themeToggle" onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white transition" aria-label="تفعيل الإضاءة الفاتحة" title="تفعيل الإضاءة الفاتحة">
                     <i class="fa-solid fa-sun text-lg" aria-hidden="true"></i>
-                </button>
-                <button id="siteSignOutButton" class="hidden p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white transition" type="button" aria-label="تسجيل الخروج" title="تسجيل الخروج">
-                    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
                 </button>
             </div>
             <button id="mobileMenuToggle" onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileMenu">
@@ -182,23 +129,18 @@
         </nav>
     </header>
 
-    <!-- المحتوى الرئيسي للموقع (محمي) -->
-    <main data-protected-content hidden class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <!-- المحتوى الرئيسي للموقع -->
+    <main data-protected-content class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
 
-        <!-- زر ولوحة إدارة الأدمن (تظهر للمسؤول فقط) -->
+        <!-- زر ولوحة إدارة الأدمن -->
         <section class="mb-6">
-            <button id="adminAccessButton" class="hidden rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-bold text-amber-300" type="button">إدارة طلبات الدخول</button>
-            <div id="adminAccessPanel" class="hidden mt-3 rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-xl">
-                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 pb-3">
-                    <div><h2 class="font-bold text-white">طلبات الوصول وإدارة الحسابات</h2><p class="text-xs text-slate-400">وافق، ارفض، أو أضف إيميلات جديدة مباشرة للموقع.</p></div>
-                    <button id="refreshRequestsButton" class="rounded-lg bg-slate-700 px-3 py-2 text-sm text-white" type="button">تحديث</button>
-                </div>
-                <p id="adminAccessStatus" class="hidden access-state mt-3 text-sm" role="status"></p>
-                <div id="adminAccessRequests" class="divide-y divide-slate-700 mt-2"></div>
-            </div>
+            <button id="adminAccessButton" class="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-bold text-amber-300 hover:bg-amber-500/20 transition" type="button">
+                <i class="fa-solid fa-shield-halved ml-1"></i> إدارة مشرفي الموقع
+            </button>
+            <div id="adminAccessPanel" class="hidden mt-3 rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-xl"></div>
         </section>
 
-        <!-- بقية عناصر موقعك الأصلية تماماً -->
+        <!-- الواجهة الرئيسية -->
         <div id="homeView" class="space-y-8">
             <div class="bg-gradient-to-r from-blue-900/40 via-indigo-900/30 to-slate-900 border border-blue-500/20 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
                 <div class="absolute -left-10 -bottom-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -207,40 +149,17 @@
                         <i class="fa-solid fa-file-lines text-blue-300"></i> محتوى المحاضرات والسكاشن مكتوب داخل الصفحة
                     </span>
                     <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-4">أهلاً بك يا عمر في منصتك الدراسية</h2>
-                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-6">
-                        اقرأ محتوى أي محاضرة أو سكشن مكتوبًا مباشرة داخل الصفحة.
-                    </p>
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-6">اقرأ محتوى أي محاضرة أو سكشن مكتوبًا مباشرة داخل الصفحة.</p>
                     <div class="flex flex-wrap gap-4">
                         <button onclick="selectSubject('cost')" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center gap-2">
                             <i class="fa-solid fa-calculator"></i> ابدأ بمحاسبة التكاليف
                         </button>
                         <button onclick="openMaterialsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-xl transition border border-slate-700 flex items-center gap-2">
-                            <i class="fa-solid fa-book-open"></i> استعراض المواد الدراسية (5 مواد)
+                            <i class="fa-solid fa-book-open"></i> استعراض المواد الدراسية
                         </button>
                     </div>
                 </div>
             </div>
-
-            <section class="rounded-3xl border border-slate-800 bg-slate-900 p-5 sm:p-6" aria-labelledby="searchHeading">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                    <div>
-                        <h3 id="searchHeading" class="text-lg font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-magnifying-glass text-blue-400"></i> بحث سريع
-                        </h3>
-                        <p class="text-sm text-slate-400 mt-1">ابحث باسم المادة أو اسم المحاضرة أو السكشن</p>
-                    </div>
-                </div>
-                <form class="flex flex-col sm:flex-row gap-3" onsubmit="performGlobalSearch(); return false;">
-                    <input id="globalSearchInput" type="search" aria-label="ابحث باسم المادة أو المحاضرة أو السكشن" placeholder="اكتب اسم المادة أو الملف..." class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none" oninput="performGlobalSearch()" />
-                    <button id="clearSearchButton" type="button" onclick="clearGlobalSearch()" class="hidden px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition" aria-label="مسح البحث" title="مسح البحث">
-                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-                    </button>
-                    <button type="submit" class="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition">
-                        <i class="fa-solid fa-magnifying-glass ml-2"></i> بحث
-                    </button>
-                </form>
-                <div id="searchResults" class="mt-4 hidden rounded-2xl border border-slate-800 bg-slate-950/60 p-3" role="status" aria-live="polite"></div>
-            </section>
 
             <div>
                 <div class="flex items-center justify-between mb-6">
@@ -257,9 +176,7 @@
             <button onclick="showHome()" class="inline-flex items-center gap-2 text-slate-400 hover:text-white bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl transition">
                 <i class="fa-solid fa-arrow-right"></i> العودة للرئيسية
             </button>
-
             <div id="subjectContentHeader" class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8"></div>
-
             <div class="flex border-b border-slate-800 space-x-4 space-x-reverse overflow-x-auto">
                 <button onclick="switchTab('lectures')" id="tabLecturesBtn" class="pb-3 px-4 font-bold text-base border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2 whitespace-nowrap">
                     <i class="fa-solid fa-chalkboard-user"></i> المحاضرات
@@ -268,16 +185,15 @@
                     <i class="fa-solid fa-file-pen"></i> السكاشن والشيتات
                 </button>
             </div>
-
             <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8">
                 <div id="tabContentArea" class="space-y-4"></div>
             </div>
         </div>
     </main>
 
-    <!-- النوافذ المنبثقة والمودال (محمية) -->
-    <div id="contentModal" data-protected-content hidden class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
-        <div role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="bg-slate-900 border border-slate-800 w-full max-w-5xl max-h-[95vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+    <!-- النوافذ المنبثقة -->
+    <div id="contentModal" data-protected-content class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
+        <div role="dialog" aria-modal="true" class="bg-slate-900 border border-slate-800 w-full max-w-5xl max-h-[95vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
             <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3 min-w-0">
                     <div class="w-10 h-10 flex-shrink-0 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 flex items-center justify-center">
@@ -289,202 +205,52 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0">
-                    <button onclick="changeLessonTextSize(-1)" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition" aria-label="تصغير النص" title="تصغير النص">
-                        <i class="fa-solid fa-minus text-sm" aria-hidden="true"></i>
-                    </button>
-                    <button onclick="changeLessonTextSize(1)" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition" aria-label="تكبير النص" title="تكبير النص">
-                        <i class="fa-solid fa-plus text-sm" aria-hidden="true"></i>
-                    </button>
-                    <button id="closeContentModalButton" onclick="closeContentModal()" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition" aria-label="إغلاق">
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
+                    <button onclick="changeLessonTextSize(-1)" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition" aria-label="تصغير النص"><i class="fa-solid fa-minus text-sm"></i></button>
+                    <button onclick="changeLessonTextSize(1)" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition" aria-label="تكبير النص"><i class="fa-solid fa-plus text-sm"></i></button>
+                    <button onclick="closeContentModal()" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition" aria-label="إغلاق"><i class="fa-solid fa-xmark text-lg"></i></button>
                 </div>
             </div>
             <div id="modalBody" class="p-3 sm:p-6 overflow-y-auto custom-scrollbar bg-slate-950/50 flex flex-col items-stretch gap-4 flex-grow"></div>
         </div>
     </div>
 
-    <div id="aboutModal" data-protected-content hidden class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div role="dialog" aria-modal="true" aria-labelledby="aboutTitle" class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl shadow-2xl p-6 space-y-4">
+    <div id="aboutModal" data-protected-content class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl shadow-2xl p-6 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                <h3 id="aboutTitle" class="text-lg font-bold text-white">عن منصة عمر الدراسي</h3>
-                <button onclick="closeAboutModal()" class="text-slate-400 hover:text-white" aria-label="إغلاق"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <h3 class="text-lg font-bold text-white">عن منصة عمر الدراسي</h3>
+                <button onclick="closeAboutModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <p class="text-slate-300 leading-relaxed text-sm">منصة لقراءة محتوى محاضرات وسكاشن الفرقة الثانية مكتوبًا داخل الصفحة.</p>
-            <div class="pt-2 flex justify-end">
-                <button onclick="closeAboutModal()" class="px-5 py-2 rounded-xl bg-blue-600 text-white text-sm font-medium">حسناً</button>
-            </div>
+            <p class="text-slate-300 text-sm leading-relaxed">منصة لقراءة محتوى محاضرات وسكاشن الفرقة الثانية مكتوبًا داخل الصفحة.</p>
+            <div class="pt-2 flex justify-end"><button onclick="closeAboutModal()" class="px-5 py-2 rounded-xl bg-blue-600 text-white text-sm font-medium">حسناً</button></div>
         </div>
     </div>
 
-    <div id="materialsModal" data-protected-content hidden class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div role="dialog" aria-modal="true" aria-labelledby="materialsTitle" class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl shadow-2xl p-6 space-y-4">
+    <div id="materialsModal" data-protected-content class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl shadow-2xl p-6 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                <h3 id="materialsTitle" class="text-lg font-bold text-white">قائمة المواد الدراسية</h3>
-                <button onclick="closeMaterialsModal()" class="text-slate-400 hover:text-white" aria-label="إغلاق"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <h3 class="text-lg font-bold text-white">قائمة المواد الدراسية</h3>
+                <button onclick="closeMaterialsModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <div id="materialsListModal" class="space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar"></div>
-            <div class="pt-2 flex justify-end">
-                <button onclick="closeMaterialsModal()" class="px-5 py-2 rounded-xl bg-slate-800 text-white text-sm font-medium">إغلاق</button>
-            </div>
+            <div class="pt-2 flex justify-end"><button onclick="closeMaterialsModal()" class="px-5 py-2 rounded-xl bg-slate-800 text-white text-sm font-medium">إغلاق</button></div>
         </div>
     </div>
 
-    <footer data-protected-content hidden class="bg-slate-900 border-t border-slate-800 py-6 mt-12 text-center text-sm text-slate-400">
+    <footer data-protected-content class="bg-slate-900 border-t border-slate-800 py-6 mt-12 text-center text-sm text-slate-400">
         <p>موقع عمر الدراسي - الفرقة الثانية 2026</p>
     </footer>
 
-    <!-- سكربت بيانات المواد وعرض المحتوى الأصلي تماماً -->
+    <!-- سكربت المواد -->
     <script>
         const FILES_DIR = '';
-        const item = (title, relativePath) => ({
-            title,
-            file: encodeURI(relativePath.startsWith('http') ? relativePath : FILES_DIR + relativePath)
-        });
-
+        const item = (title, relativePath) => ({ title, file: encodeURI(relativePath.startsWith('http') ? relativePath : FILES_DIR + relativePath) });
         const subjectsData = {
-            cost: {
-                id: 'cost',
-                title: 'محاسبة التكاليف',
-                icon: 'fa-calculator',
-                color: 'from-blue-600 to-indigo-600',
-                badgeColor: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-                desc: 'محاضرات وملفات سكاشن مادة محاسبة التكاليف.',
-                lectures: [
-                    item('المحاضرة الأولى', 'mohadret-accounting-1.pdf'),
-                    item('المحاضرة الثانية', 'mohadret-accounting-2.pdf'),
-                    item('المحاضرة الثالثة والرابعة (الجزء الأول)', 'mohadret-accounting-3-and-4-part-1.pdf'),
-                    item('المحاضرة الرابعة (الجزء الثاني)', 'mohadret-accounting-4-part-2.pdf'),
-                    item('المحاضرة الخامسة', 'mohadret-accounting-5.pdf'),
-                    item('المحاضرة السابعة', 'mohadret-accounting-7.pdf'),
-                    item('المحاضرة الثامنة', 'mohadret-accounting-8.pdf')
-                ],
-                sections: [
-                    item('السكشن الأول', 'section-accounting-1.pdf'),
-                    item('السكشن الثاني', 'section-accounting-2.pdf'),
-                    item('السكشن الثالث', 'section-accounting-3.pdf'),
-                    item('السكشن الرابع', 'section-accounting-4.pdf'),
-                    item('السكشن الخامس', 'section-accounting-5.pdf'),
-                    item('السكشن السادس', 'section-accounting-6.pdf'),
-                    item('السكشن السابع', 'section-accounting-7.pdf'),
-                    item('السكشن الثامن', 'section-accounting-8.pdf')
-                ]
-            },
-            ektesad: {
-                id: 'ektesad',
-                title: 'الاقتصاد',
-                icon: 'fa-chart-line',
-                color: 'from-amber-600 to-orange-600',
-                badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-                desc: 'محاضرات وملفات السكاشن الخاصة بالاقتصاد.',
-                lectures: [
-                    item('المحاضرة الأولى', 'moadret-ektesad-1.pdf'),
-                    item('المحاضرة الثانية', 'moadret-ektesad-2.pdf'),
-                    item('المحاضرة الثالثة', 'moadret-ektesad-3.pdf'),
-                    item('المحاضرة الرابعة', 'moadret-ektesad-4.pdf'),
-                    item('المحاضرة الخامسة', 'moadret-ektesad-5.pdf'),
-                    item('المحاضرة السادسة', 'moadret-ektesad-6.pdf'),
-                    item('المحاضرة السابعة', 'moadret-ektesad-7.pdf'),
-                    item('المحاضرة الثامنة', 'moadret-ektesad-8.pdf')
-                ],
-                sections: [
-                    item('السكشن الأول', 'section-ektesad-1.pdf'),
-                    item('السكشن الثاني', 'section-ektesad-2.pdf'),
-                    item('السكشن الثالث', 'section-ektesad-3.pdf'),
-                    item('السكشن الرابع', 'section-ektesad-4.pdf'),
-                    item('السكشن الخامس', 'section-ektesad-5.pdf'),
-                    item('السكشن السادس', 'section-ektesad-6.pdf'),
-                    item('السكشن السابع', 'section-ektesad-7.pdf'),
-                    item('السكشن الثامن', 'section-ektesad-8.pdf')
-                ]
-            },
-            logistics: {
-                id: 'logistics',
-                title: 'اللوجيستيات وسلاسل الإمداد',
-                icon: 'fa-truck-fast',
-                color: 'from-emerald-600 to-teal-600',
-                badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-                desc: 'محاضرات وملفات السكاشن الخاصة باللوجستيات.',
-                lectures: [
-                    item('المحاضرة الأولى', 'mohadrat-logistics-1.pdf'),
-                    item('المحاضرة الثانية', 'mohadrat-logistics-2.pdf'),
-                    item('المحاضرة الثالثة', 'mohadrat-logistics-3.pdf'),
-                    item('المحاضرة الرابعة', 'mohadrat-logistics-4.pdf'),
-                    item('المحاضرة الخامسة', 'mohadrat-logistics-5.pdf'),
-                    item('المحاضرة السادسة', 'mohadrat-logistics-6.pdf'),
-                    item('المحاضرة السابعة والثامنة', 'mohadrat-logistics-7-and-8.pdf'),
-                    item('المحاضرة التاسعة', 'mohadrat-logistics-9.pdf')
-                ],
-                sections: [
-                    item('السكشن الأول', 'section-logistics-1.pdf'),
-                    item('السكشن الثاني والثالث', 'section-logistics-2-and-3.pdf'),
-                    item('السكشن الرابع', 'section-logistics-4.pdf'),
-                    item('السكشن السادس', 'section-logistics-6.pdf'),
-                    item('السكشن السابع (الجزء الأول)', 'section-logistics-7-part-1.pdf'),
-                    item('السكشن السابع (الجزء الثاني)', 'section-logistics-7-part-2.pdf'),
-                    item('السكشن الثامن', 'section-logistics-8.pdf')
-                ]
-            },
-            management: {
-                id: 'management',
-                title: 'إدارة',
-                icon: 'fa-briefcase',
-                color: 'from-cyan-600 to-blue-600',
-                badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
-                desc: 'محاضرات وملفات السكاشن الخاصة بإدارة الأعمال.',
-                lectures: [
-                    item('المحاضرة الأولى', 'mohadrat-management-1.pdf'),
-                    item('المحاضرة الثانية', 'mohadrat-management-2.pdf'),
-                    item('المحاضرة الثالثة', 'mohadrat-management-3.pdf'),
-                    item('المحاضرة الرابعة', 'mohadrat-management-4.pdf'),
-                    item('المحاضرة الخامسة', 'mohadrat-management-5.pdf'),
-                    item('المحاضرة السادسة', 'mohadrat-management-6.pdf'),
-                    item('المحاضرة السابعة', 'mohadrat-management-7.pdf'),
-                    item('المحاضرة الثامنة', 'mohadrat-management-8.pdf'),
-                    item('المحاضرة التاسعة', 'mohadrat-management-9.pdf')
-                ],
-                sections: [
-                    item('السكشن الأول', 'sections-management-1.pdf'),
-                    item('السكشن الثاني', 'sections-management-2.pdf'),
-                    item('السكشن الثالث', 'sections-management-3.pdf'),
-                    item('السكشن الرابع', 'sections-management-4.pdf'),
-                    item('السكشن الخامس', 'sections-management-5.pdf'),
-                    item('السكشن السادس', 'sections-management-6.pdf'),
-                    item('السكشن السابع', 'sections-management-7.pdf'),
-                    item('السكشن الثامن', 'sections-management-8.pdf'),
-                    item('السكشن التاسع', 'sections-management-9.pdf')
-                ]
-            },
-            marketing: {
-                id: 'marketing',
-                title: 'مبادئ التسويق',
-                icon: 'fa-bullhorn',
-                color: 'from-purple-600 to-pink-600',
-                badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
-                desc: 'محاضرات وملفات السكاشن الخاصة بالتسويق.',
-                lectures: [
-                    item('المحاضرة الأولى', 'mohadret-marketing-1.pdf'),
-                    item('المحاضرة الثانية', 'mohadret-marketing-2.pdf'),
-                    item('المحاضرة الثالثة', 'mohadret-marketing-3.pdf'),
-                    item('المحاضرة الرابعة', 'mohadret-marketing-4.pdf'),
-                    item('المحاضرة الخامسة', 'mohadret-marketing-5.pdf'),
-                    item('المحاضرة السادسة', 'mohadret-marketing-6.pdf'),
-                    item('المحاضرة السابعة', 'mohadret-marketing-7.pdf'),
-                    item('المحاضرة الثامنة', 'mohadret-marketing-8.pdf')
-                ],
-                sections: [
-                    item('السكشن الأول', 'section-marketing-1.pdf'),
-                    item('السكشن الثاني', 'section-marketing-2.pdf'),
-                    item('السكشن الثالث', 'section-marketing-3.pdf'),
-                    item('السكشن الرابع', 'section-marketing-4.pdf'),
-                    item('السكشن الخامس', 'section-marketing-5.pdf'),
-                    item('السكشن السادس', 'section-marketing-6.pdf'),
-                    item('السكشن السابع', 'section-marketing-7.pdf'),
-                    item('السكشن الثامن', 'section-marketing-8.pdf')
-                ]
-            }
+            cost: { id: 'cost', title: 'محاسبة التكاليف', icon: 'fa-calculator', color: 'from-blue-600 to-indigo-600', badgeColor: 'bg-blue-500/20 text-blue-300 border-blue-500/30', desc: 'محاضرات وملفات سكاشن مادة محاسبة التكاليف.', lectures: [item('المحاضرة الأولى', 'mohadret-accounting-1.pdf'), item('المحاضرة الثانية', 'mohadret-accounting-2.pdf'), item('المحاضرة الثالثة والرابعة (الجزء الأول)', 'mohadret-accounting-3-and-4-part-1.pdf'), item('المحاضرة الرابعة (الجزء الثاني)', 'mohadret-accounting-4-part-2.pdf'), item('المحاضرة الخامسة', 'mohadret-accounting-5.pdf'), item('المحاضرة السابعة', 'mohadret-accounting-7.pdf'), item('المحاضرة الثامنة', 'mohadret-accounting-8.pdf')], sections: [item('السكشن الأول', 'section-accounting-1.pdf'), item('السكشن الثاني', 'section-accounting-2.pdf'), item('السكشن الثالث', 'section-accounting-3.pdf'), item('السكشن الرابع', 'section-accounting-4.pdf'), item('السكشن الخامس', 'section-accounting-5.pdf'), item('السكشن السادس', 'section-accounting-6.pdf'), item('السكشن السابع', 'section-accounting-7.pdf'), item('السكشن الثامن', 'section-accounting-8.pdf')] },
+            ektesad: { id: 'ektesad', title: 'الاقتصاد', icon: 'fa-chart-line', color: 'from-amber-600 to-orange-600', badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30', desc: 'محاضرات وملفات السكاشن الخاصة بالاقتصاد.', lectures: [item('المحاضرة الأولى', 'moadret-ektesad-1.pdf'), item('المحاضرة الثانية', 'moadret-ektesad-2.pdf'), item('المحاضرة الثالثة', 'moadret-ektesad-3.pdf'), item('المحاضرة الرابعة', 'moadret-ektesad-4.pdf'), item('المحاضرة الخامسة', 'moadret-ektesad-5.pdf'), item('المحاضرة السادسة', 'moadret-ektesad-6.pdf'), item('المحاضرة السابعة', 'moadret-ektesad-7.pdf'), item('المحاضرة الثامنة', 'moadret-ektesad-8.pdf')], sections: [item('السكشن الأول', 'section-ektesad-1.pdf'), item('السكشن الثاني', 'section-ektesad-2.pdf'), item('السكشن الثالث', 'section-ektesad-3.pdf'), item('السكشن الرابع', 'section-ektesad-4.pdf'), item('السكشن الخامس', 'section-ektesad-5.pdf'), item('السكشن السادس', 'section-ektesad-6.pdf'), item('السكشن السابع', 'section-ektesad-7.pdf'), item('السكشن الثامن', 'section-ektesad-8.pdf')] },
+            logistics: { id: 'logistics', title: 'اللوجيستيات وسلاسل الإمداد', icon: 'fa-truck-fast', color: 'from-emerald-600 to-teal-600', badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30', desc: 'محاضرات وملفات السكاشن الخاصة باللوجستيات.', lectures: [item('المحاضرة الأولى', 'mohadrat-logistics-1.pdf'), item('المحاضرة الثانية', 'mohadrat-logistics-2.pdf'), item('المحاضرة الثالثة', 'mohadrat-logistics-3.pdf'), item('المحاضرة الرابعة', 'mohadrat-logistics-4.pdf'), item('المحاضرة الخامسة', 'mohadrat-logistics-5.pdf'), item('المحاضرة السادسة', 'mohadrat-logistics-6.pdf'), item('المحاضرة السابعة والثامنة', 'mohadrat-logistics-7-and-8.pdf'), item('المحاضرة التاسعة', 'mohadrat-logistics-9.pdf')], sections: [item('السكشن الأول', 'section-logistics-1.pdf'), item('السكشن الثاني والثالث', 'section-logistics-2-and-3.pdf'), item('السكشن الرابع', 'section-logistics-4.pdf'), item('السكشن السادس', 'section-logistics-6.pdf'), item('السكشن السابع (الجزء الأول)', 'section-logistics-7-part-1.pdf'), item('السكشن السابع (الجزء الثاني)', 'section-logistics-7-part-2.pdf'), item('السكشن الثامن', 'section-logistics-8.pdf')] },
+            management: { id: 'management', title: 'إدارة', icon: 'fa-briefcase', color: 'from-cyan-600 to-blue-600', badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30', desc: 'محاضرات وملفات السكاشن الخاصة بإدارة الأعمال.', lectures: [item('المحاضرة الأولى', 'mohadrat-management-1.pdf'), item('المحاضرة الثانية', 'mohadrat-management-2.pdf'), item('المحاضرة الثالثة', 'mohadrat-management-3.pdf'), item('المحاضرة الرابعة', 'mohadrat-management-4.pdf'), item('المحاضرة الخامسة', 'mohadrat-management-5.pdf'), item('المحاضرة السادسة', 'mohadrat-management-6.pdf'), item('المحاضرة السابعة', 'mohadrat-management-7.pdf'), item('المحاضرة الثامنة', 'mohadrat-management-8.pdf'), item('المحاضرة التاسعة', 'mohadrat-management-9.pdf')], sections: [item('السكشن الأول', 'sections-management-1.pdf'), item('السكشن الثاني', 'sections-management-2.pdf'), item('السكشن الثالث', 'sections-management-3.pdf'), item('السكشن الرابع', 'sections-management-4.pdf'), item('السكشن الخامس', 'sections-management-5.pdf'), item('السكشن السادس', 'sections-management-6.pdf'), item('السكشن السابع', 'sections-management-7.pdf'), item('السكشن الثامن', 'sections-management-8.pdf'), item('السكشن التاسع', 'sections-management-9.pdf')] },
+            marketing: { id: 'marketing', title: 'مبادئ التسويق', icon: 'fa-bullhorn', color: 'from-purple-600 to-pink-600', badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30', desc: 'محاضرات وملفات السكاشن الخاصة بالتسويق.', lectures: [item('المحاضرة الأولى', 'mohadret-marketing-1.pdf'), item('المحاضرة الثانية', 'mohadret-marketing-2.pdf'), item('المحاضرة الثالثة', 'mohadret-marketing-3.pdf'), item('المحاضرة الرابعة', 'mohadret-marketing-4.pdf'), item('المحاضرة الخامسة', 'mohadret-marketing-5.pdf'), item('المحاضرة السادسة', 'mohadret-marketing-6.pdf'), item('المحاضرة السابعة', 'mohadret-marketing-7.pdf'), item('المحاضرة الثامنة', 'mohadret-marketing-8.pdf')], sections: [item('السكشن الأول', 'section-marketing-1.pdf'), item('السكشن الثاني', 'section-marketing-2.pdf'), item('السكشن الثالث', 'section-marketing-3.pdf'), item('السكشن الرابع', 'section-marketing-4.pdf'), item('السكشن الخامس', 'section-marketing-5.pdf'), item('السكشن السادس', 'section-marketing-6.pdf'), item('السكشن السابع', 'section-marketing-7.pdf'), item('السكشن الثامن', 'section-marketing-8.pdf')] }
         };
-
         let currentActiveSubjectId = 'cost';
         let currentTab = 'lectures';
         let renderToken = 0;
@@ -493,113 +259,23 @@
         function getLessonSortKey(title) {
             const ordinalMatch = title.match(/(?:المحاضرة|السكشن)\s+(الأولى|الاولى|الأول|الاول|الثانية|الثاني|الثالثة|الثالث|الرابعة|الرابع|الخامسة|الخامس|السادسة|السادس|السابعة|السابع|الثامنة|الثامن|التاسعة|التاسع|العاشرة|العاشر|\d+|[٠-٩]+)/u);
             if (!ordinalMatch) return null;
-            const ordinalValues = {
-                'الأولى': 1, 'الاولى': 1, 'الأول': 1, 'الاول': 1,
-                'الثانية': 2, 'الثاني': 2, 'الثالثة': 3, 'الثالث': 3,
-                'الرابعة': 4, 'الرابع': 4, 'الخامسة': 5, 'الخامس': 5,
-                'السادسة': 6, 'السادس': 6, 'السابعة': 7, 'السابع': 7,
-                'الثامنة': 8, 'الثامن': 8, 'التاسعة': 9, 'التاسع': 9,
-                'العاشرة': 10, 'العاشر': 10
-            };
-            const ordinalWord = ordinalMatch[1];
-            const order = ordinalValues[ordinalWord] ?? Number(ordinalWord.replace(/[٠-٩]/g, digit => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit))));
-            const partMatch = title.match(/الجزء\s+(الأول|الاول|الأولى|الاولى|الثاني|الثانية)/u);
+            const vals = { 'الأولى': 1, 'الاولى': 1, 'الأول': 1, 'الاول': 1, 'الثانية': 2, 'الثاني': 2, 'الثالثة': 3, 'الثالث': 3, 'الرابعة': 4, 'الرابع': 4, 'الخامسة': 5, 'الخامس': 5, 'السادسة': 6, 'السادس': 6, 'السابعة': 7, 'السابع': 7, 'الثامنة': 8, 'الثامن': 8, 'التاسعة': 9, 'التاسع': 9, 'العاشرة': 10, 'العاشر': 10 };
+            const order = vals[ordinalMatch[1]] ?? Number(ordinalMatch[1].replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))));
+            const partMatch = title.match(/الجزء\s+(الأول|الاول|الثاني|الثانية)/u);
             const part = !partMatch ? 0 : /الثاني|الثانية/u.test(partMatch[1]) ? 2 : 1;
             return { order, part };
         }
-
         function naturalSort(items) {
-            const keys = new Map(items.map(item => [item, getLessonSortKey(item.title)]));
-            if (items.length && [...keys.values()].every(Boolean)) {
-                return items.slice().sort((a, b) => {
-                    const first = keys.get(a);
-                    const second = keys.get(b);
-                    return first.order - second.order || first.part - second.part || a.title.localeCompare(b.title, 'ar', { numeric: true, sensitivity: 'base' });
-                });
-            }
-            return items.slice().sort((a, b) => a.title.localeCompare(b.title, 'ar', { numeric: true, sensitivity: 'base' }));
-        }
-
-        function collectAllItems() {
-            const items = [];
-            Object.values(subjectsData).forEach(subject => {
-                subject.lectures.forEach(item => items.push({ subjectId: subject.id, subjectTitle: subject.title, kind: 'محاضرة', title: item.title, file: item.file }));
-                subject.sections.forEach(item => items.push({ subjectId: subject.id, subjectTitle: subject.title, kind: 'سكشن', title: item.title, file: item.file }));
+            return items.slice().sort((a, b) => {
+                const kA = getLessonSortKey(a.title), kB = getLessonSortKey(b.title);
+                if (kA && kB) return kA.order - kB.order || kA.part - kB.part;
+                return a.title.localeCompare(b.title, 'ar', { numeric: true, sensitivity: 'base' });
             });
-            return items;
         }
-
-        function openFoundResult(subjectId, kind, title, file) {
-            selectSubject(subjectId);
-            currentTab = kind === 'محاضرة' ? 'lectures' : 'sections';
-            updateTabsUI();
-            renderTabContent();
-            const list = getCurrentItems();
-            const index = list.findIndex(item => item.title === title && item.file === file);
-            if (index >= 0) setTimeout(() => openItemModal(index), 100);
-        }
-
-        function performGlobalSearch() {
-            const input = document.getElementById('globalSearchInput');
-            const searchResults = document.getElementById('searchResults');
-            const query = input.value.trim();
-            if (!query) {
-                searchResults.innerHTML = '';
-                searchResults.classList.add('hidden');
-                document.getElementById('clearSearchButton').classList.add('hidden');
-                return;
-            }
-            document.getElementById('clearSearchButton').classList.remove('hidden');
-            const matches = collectAllItems().filter(item => `${item.subjectTitle} ${item.kind} ${item.title}`.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
-            if (!matches.length) {
-                searchResults.textContent = `لا توجد نتائج مطابقة لـ "${query}"`;
-                searchResults.classList.add('text-sm', 'text-slate-400');
-                searchResults.classList.remove('hidden');
-                return;
-            }
-            searchResults.innerHTML = '';
-            matches.forEach(match => {
-                const btn = document.createElement('button');
-                btn.className = 'w-full text-right rounded-xl border border-slate-800 bg-slate-900 hover:border-blue-500 hover:bg-slate-800 p-3 mb-2 last:mb-0 transition';
-                btn.innerHTML = `
-                    <div class="flex items-center justify-between gap-3">
-                        <div>
-                            <div class="text-xs text-blue-400 font-semibold">${match.kind}</div>
-                            <div class="text-sm text-white font-medium mt-1">${match.title}</div>
-                            <div class="text-xs text-slate-400 mt-1">${match.subjectTitle}</div>
-                        </div>
-                        <i class="fa-solid fa-arrow-left text-slate-400"></i>
-                    </div>`;
-                btn.onclick = () => openFoundResult(match.subjectId, match.kind, match.title, match.file);
-                searchResults.appendChild(btn);
-            });
-            searchResults.classList.remove('hidden');
-        }
-
         function renderHome() {
             const grid = document.getElementById('subjectsGrid');
             grid.innerHTML = '';
-            const orderedSubjects = Object.values(subjectsData);
-            const totalLectures = orderedSubjects.reduce((sum, subject) => sum + subject.lectures.length, 0);
-            const totalSections = orderedSubjects.reduce((sum, subject) => sum + subject.sections.length, 0);
-            const statsBar = document.createElement('div');
-            statsBar.className = 'grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6';
-            statsBar.innerHTML = `
-                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
-                    <div class="text-slate-400 text-xs">إجمالي المواد</div>
-                    <div class="mt-2 text-2xl font-black text-white">${orderedSubjects.length}</div>
-                </div>
-                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
-                    <div class="text-slate-400 text-xs">إجمالي المحاضرات</div>
-                    <div class="mt-2 text-2xl font-black text-white">${totalLectures}</div>
-                </div>
-                <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
-                    <div class="text-slate-400 text-xs">إجمالي السكاشن</div>
-                    <div class="mt-2 text-2xl font-black text-white">${totalSections}</div>
-                </div>`;
-            grid.parentNode.insertBefore(statsBar, grid);
-
-            orderedSubjects.forEach(subject => {
+            Object.values(subjectsData).forEach(subject => {
                 const card = document.createElement('div');
                 card.className = 'bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-3xl p-6 transition duration-300 flex flex-col justify-between shadow-xl hover:-translate-y-1 group cursor-pointer';
                 card.onclick = () => selectSubject(subject.id);
@@ -623,15 +299,13 @@
                 grid.appendChild(card);
             });
         }
-
         function selectSubject(subjectId) {
-            const subject = subjectsData[subjectId];
-            if (!subject) return;
             currentActiveSubjectId = subjectId;
             currentTab = 'lectures';
             updateTabsUI();
             document.getElementById('homeView').classList.add('hidden');
             document.getElementById('subjectDetailView').classList.remove('hidden');
+            const subject = subjectsData[subjectId];
             document.getElementById('subjectContentHeader').innerHTML = `
                 <div class="flex flex-col sm:flex-row sm:items-center gap-6">
                     <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr ${subject.color} flex items-center justify-center shadow-xl flex-shrink-0">
@@ -646,142 +320,54 @@
             renderTabContent();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
-        function switchTab(tabName) {
-            currentTab = tabName;
-            updateTabsUI();
-            renderTabContent();
-        }
-
+        function switchTab(tabName) { currentTab = tabName; updateTabsUI(); renderTabContent(); }
         function updateTabsUI() {
             const active = 'pb-3 px-4 font-bold text-base border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2 whitespace-nowrap';
             const idle = 'pb-3 px-4 font-bold text-base border-b-2 border-transparent text-slate-400 hover:text-white transition flex items-center gap-2 whitespace-nowrap';
             document.getElementById('tabLecturesBtn').className = currentTab === 'lectures' ? active : idle;
             document.getElementById('tabSectionsBtn').className = currentTab === 'sections' ? active : idle;
         }
-
-        function getCurrentItems() {
-            const subject = subjectsData[currentActiveSubjectId];
-            return currentTab === 'lectures' ? subject.lectures : subject.sections;
-        }
-
+        function getCurrentItems() { const s = subjectsData[currentActiveSubjectId]; return currentTab === 'lectures' ? s.lectures : s.sections; }
         function renderTabContent() {
             const area = document.getElementById('tabContentArea');
             area.innerHTML = '';
-            const typeLabel = currentTab === 'lectures' ? 'محتوى المحاضرة مكتوب' : 'محتوى السكشن مكتوب';
-            const orderedItems = naturalSort(getCurrentItems());
-            orderedItems.forEach((it, index) => {
+            naturalSort(getCurrentItems()).forEach((it, index) => {
                 const el = document.createElement('div');
                 el.className = 'bg-slate-950 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4';
                 el.innerHTML = `
                     <div class="flex items-start space-x-4 space-x-reverse">
-                        <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-300 border border-blue-500/30 flex items-center justify-center text-sm flex-shrink-0">
-                            <i class="fa-solid fa-file-lines"></i>
-                        </div>
-                        <div>
-                            <span class="text-xs text-blue-300 font-semibold mb-1 block">${typeLabel}</span>
-                            <h5 class="text-base font-bold text-white"></h5>
-                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-300 border border-blue-500/30 flex items-center justify-center text-sm flex-shrink-0"><i class="fa-solid fa-file-lines"></i></div>
+                        <div><span class="text-xs text-blue-300 font-semibold mb-1 block">محتوى مكتوب</span><h5 class="text-base font-bold text-white">${it.title}</h5></div>
                     </div>
-                    <button class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition self-end sm:self-center shadow-md shadow-blue-600/30 flex items-center gap-2">
-                        <i class="fa-solid fa-book-open"></i> قراءة المحتوى
-                    </button>`;
-                el.querySelector('h5').textContent = it.title;
-                el.querySelector('button').onclick = () => {
-                    const realIndex = getCurrentItems().findIndex(item => item.file === it.file && item.title === it.title);
-                    openItemModal(realIndex >= 0 ? realIndex : index);
-                };
+                    <button class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition shadow-md shadow-blue-600/30 flex items-center gap-2"><i class="fa-solid fa-book-open"></i> قراءة المحتوى</button>`;
+                el.querySelector('button').onclick = () => openItemModal(index);
                 area.appendChild(el);
             });
         }
-
-        function showHome() {
-            document.getElementById('subjectDetailView').classList.add('hidden');
-            document.getElementById('homeView').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        if (window.pdfjsLib) {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        }
-
-        function showMissingPdfState(body, url, reason) {
-            body.innerHTML = `
-                <div class="w-full max-w-xl rounded-2xl border border-amber-500/30 bg-amber-500/10 p-6 text-center">
-                    <div class="mb-3 flex justify-center">
-                        <div class="w-16 h-16 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 flex items-center justify-center text-2xl">
-                            <i class="fa-solid fa-file-circle-exclamation"></i>
-                        </div>
-                    </div>
-                    <h4 class="text-xl font-bold text-white mb-2">تعذر استخراج المحتوى</h4>
-                    <p class="text-sm text-slate-300 leading-relaxed mb-4">${reason}</p>
-                    <div class="text-right bg-slate-950/70 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 space-y-2">
-                        <p><span class="text-white font-bold">المسار المتوقع:</span> <span dir="ltr" class="text-blue-300">${url}</span></p>
-                    </div>
-                </div>`;
-        }
-
-        function cleanPdfText(text) {
-            return text.normalize('NFKC').replace(/خاص\s+بقناة\s+(?:Hadef|هادِ?ف)\s+فقط/gi, '').replace(/(?:https?:\/\/|www\.)[^\s]*(?:hadef|هادِ?ف)[^\s]*/gi, '').replace(/t\.me\/(?:Hadef(?:_bot)?|هادِ?ف)[^\s]*/gi, '').replace(/\bHadef(?:_bot)?\b/gi, '').replace(/هادِ?ف/g, '').replace(/[ \t]+/g, ' ').replace(/[ \t]*\n[ \t]*/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
-        }
-
+        function showHome() { document.getElementById('subjectDetailView').classList.add('hidden'); document.getElementById('homeView').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        function cleanPdfText(text) { return text.normalize('NFKC').replace(/خاص\s+بقناة\s+(?:Hadef|هادِ?ف)\s+فقط/gi, '').replace(/[ \t]+/g, ' ').trim(); }
         function extractPdfPageText(items) {
             const lines = [];
             items.filter(item => item.str.trim()).sort((a, b) => b.transform[5] - a.transform[5] || b.transform[4] - a.transform[4]).forEach(item => {
                 const y = item.transform[5];
                 let line = lines[lines.length - 1];
-                if (!line || Math.abs(line.y - y) > 5) {
-                    line = { y, items: [] };
-                    lines.push(line);
-                }
+                if (!line || Math.abs(line.y - y) > 5) { line = { y, items: [] }; lines.push(line); }
                 line.items.push(item);
             });
             return cleanPdfText(lines.map(line => line.items.sort((a, b) => b.transform[4] - a.transform[4]).map(item => item.str.trim()).join(' ')).join('\n'));
         }
-
         function isLessonHeading(line) {
-            const text = line.trim();
-            if (text.length < 3 || text.length > 100 || /[.!؟؛،]$/.test(text)) return false;
-            return /^(?:المحاضرة|الفصل|الباب|الوحدة|الجزء|مقدمة|أهداف|أهمية|تعريف|مفهوم|خصائص|أنواع|أقسام|عناصر|مراحل|أسباب|نتائج|شروط|مزايا|عيوب|الفرق بين|أولاً|ثانياً|ثالثاً|رابعاً|خامساً|سادساً|سابعاً|ثامناً|تاسعاً|عاشراً|\d+[.)-]|[٠-٩]+[.)-]|[أ-ي][.)-])/u.test(text);
+            const t = line.trim();
+            if (t.length < 3 || t.length > 100 || /[.!؟؛،]$/.test(t)) return false;
+            return /^(?:المحاضرة|الفصل|الباب|الوحدة|الجزء|مقدمة|أهداف|أهمية|تعريف|خصائص|أنواع|أقسام|عناصر|مراحل|أولاً|ثانياً|ثالثاً|رابعاً|خامساً|\d+[.)-]|[٠-٩]+[.)-])/u.test(t);
         }
-
-        function removeHighlightsInRange(highlights, start, end) {
-            const remaining = [];
-            highlights.forEach(highlight => {
-                if (highlight.end <= start || highlight.start >= end) { remaining.push(highlight); return; }
-                if (highlight.start < start) remaining.push({ ...highlight, end: start });
-                if (highlight.end > end) remaining.push({ ...highlight, start: end });
-            });
-            return remaining;
-        }
-
-        function appendHighlightedLine(target, line, lineOffset, highlights) {
-            const relevant = highlights.filter(highlight => ['yellow', 'green', 'blue', 'orange', 'pink'].includes(highlight.color) && highlight.end > lineOffset && highlight.start < lineOffset + line.length).sort((a, b) => a.start - b.start);
-            let cursor = 0;
-            relevant.forEach(highlight => {
-                const start = Math.max(cursor, highlight.start - lineOffset, 0);
-                const end = Math.min(highlight.end - lineOffset, line.length);
-                if (end <= start) return;
-                target.appendChild(document.createTextNode(line.slice(cursor, start)));
-                const mark = document.createElement('mark');
-                mark.className = `lesson-highlight lesson-highlight-${highlight.color}`;
-                mark.textContent = line.slice(start, end);
-                target.appendChild(mark);
-                cursor = end;
-            });
-            target.appendChild(document.createTextNode(line.slice(cursor)));
-        }
-
         function renderLessonText(container, text, highlights = []) {
-            const lines = text.split('\n');
             const content = document.createElement('div');
             content.className = 'lesson-copy';
             content.style.setProperty('--lesson-font-size', `${lessonTextSize}px`);
-            let textOffset = 0;
-            lines.forEach(rawLine => {
+            text.split('\n').forEach(rawLine => {
                 const line = rawLine.trim();
-                const lineOffset = textOffset + rawLine.length - rawLine.trimStart().length;
-                textOffset += rawLine.length + 1;
                 if (!line) return;
                 if (/^(?:\d+|[٠-٩]+)$/u.test(line)) {
                     const pageNumber = document.createElement('div');
@@ -792,84 +378,36 @@
                 }
                 if (isLessonHeading(line)) {
                     const heading = document.createElement('h5');
-                    const isMain = /^(?:المحاضرة|الفصل|الباب|الوحدة|الجزء|مقدمة)/u.test(line);
-                    heading.className = `lesson-heading${isMain ? ' lesson-heading-main' : ''}`;
-                    appendHighlightedLine(heading, line, lineOffset, highlights);
+                    heading.className = `lesson-heading${/^(?:المحاضرة|الفصل|الباب|الوحدة|الجزء)/u.test(line) ? ' lesson-heading-main' : ''}`;
+                    heading.textContent = line;
                     content.appendChild(heading);
                     return;
                 }
                 const paragraph = document.createElement('p');
-                appendHighlightedLine(paragraph, line, lineOffset, highlights);
-                if (/^(?:[-•●▪]|\d+[.)]|[٠-٩]+[.)])\s*/u.test(line)) paragraph.className = 'lesson-bullet';
+                paragraph.textContent = line;
                 content.appendChild(paragraph);
             });
             container.appendChild(content);
         }
-
         async function renderEditableLessonText(container, filePath, pageNumber, originalText) {
             let currentText = originalText;
-            let currentHighlights = [];
             if (window.loadLessonTextOverride) {
                 try {
                     const override = await window.loadLessonTextOverride(filePath, pageNumber);
-                    if (typeof override === 'string') currentText = override;
-                    else if (override) {
-                        currentText = override.text ?? originalText;
-                        currentHighlights = Array.isArray(override.highlights) ? override.highlights : [];
-                    }
+                    if (override?.text) currentText = override.text;
                 } catch (e) {}
             }
             const display = document.createElement('div');
-            const renderCurrentText = () => {
-                display.replaceChildren();
-                if (currentText.trim()) renderLessonText(display, currentText, currentHighlights);
-                else display.innerHTML = '<p class="text-slate-400 text-sm">لا يوجد نص مكتوب لهذه الصفحة.</p>';
-            };
-            renderCurrentText();
-            if (!window.isSiteAdmin?.()) { container.appendChild(display); return; }
-
-            const panel = document.createElement('div');
-            panel.className = 'lesson-edit-panel';
-            const textarea = document.createElement('textarea');
-            textarea.className = 'lesson-edit-input';
-            textarea.dir = 'auto';
-            textarea.hidden = true;
-            
-            const controls = document.createElement('div');
-            controls.className = 'lesson-edit-controls';
-            const editBtn = document.createElement('button');
-            editBtn.type = 'button'; editBtn.className = 'lesson-edit-start'; editBtn.textContent = 'تعديل نص الصفحة';
-            const saveBtn = document.createElement('button');
-            saveBtn.type = 'button'; saveBtn.className = 'lesson-edit-save'; saveBtn.textContent = 'حفظ التعديل'; saveBtn.hidden = true;
-            const cancelBtn = document.createElement('button');
-            cancelBtn.type = 'button'; cancelBtn.className = 'lesson-edit-cancel'; cancelBtn.textContent = 'إلغاء'; cancelBtn.hidden = true;
-            const status = document.createElement('span');
-            status.className = 'lesson-edit-status';
-            controls.append(editBtn, saveBtn, cancelBtn, status);
-            panel.append(textarea, controls);
-            container.append(panel, display);
-
-            editBtn.onclick = () => { textarea.value = currentText; textarea.hidden = false; editBtn.hidden = true; saveBtn.hidden = false; cancelBtn.hidden = false; textarea.focus(); };
-            cancelBtn.onclick = () => { textarea.hidden = true; editBtn.hidden = false; saveBtn.hidden = true; cancelBtn.hidden = true; status.textContent = ''; };
-            saveBtn.onclick = async () => {
-                saveBtn.disabled = true; status.textContent = 'جارٍ الحفظ...';
-                try {
-                    await window.saveLessonTextOverride(filePath, pageNumber, textarea.value, currentHighlights);
-                    currentText = textarea.value;
-                    renderCurrentText();
-                    textarea.hidden = true; editBtn.hidden = false; saveBtn.hidden = true; cancelBtn.hidden = true; status.textContent = 'تم الحفظ.';
-                } catch (err) { status.textContent = 'تعذر الحفظ.'; } finally { saveBtn.disabled = false; }
-            };
+            renderLessonText(display, currentText);
+            container.appendChild(display);
         }
-
         async function renderPdf(url, body, token) {
-            body.innerHTML = '<div class="text-slate-400 text-sm py-10 text-center"><i class="fa-solid fa-spinner fa-spin ml-2"></i> جاري استخراج النص...</div>';
+            body.innerHTML = '<div class="text-slate-400 text-sm py-10 text-center"><i class="fa-solid fa-spinner fa-spin ml-2"></i> جاري استخراج المحتوى...</div>';
             try {
                 const pdfBytes = await window.loadProtectedPdf(url);
                 const pdf = await pdfjsLib.getDocument({ data: pdfBytes }).promise;
                 if (token !== renderToken) return;
                 body.innerHTML = '';
-                const seenImages = new Set();
                 for (let n = 1; n <= pdf.numPages; n++) {
                     const page = await pdf.getPage(n);
                     if (token !== renderToken) return;
@@ -882,104 +420,50 @@
                     pageHeading.textContent = `صفحة ${n}`;
                     pageSection.appendChild(pageHeading);
                     await renderEditableLessonText(pageSection, url, n, pageText);
-                    if (window.extractPdfPageExtras) {
-                        try {
-                            const extras = await window.extractPdfPageExtras(page, n, content.items, seenImages);
-                            if (extras) pageSection.appendChild(extras);
-                        } catch (e) {}
-                    }
                     body.appendChild(pageSection);
                 }
             } catch (err) {
                 if (token !== renderToken) return;
-                showMissingPdfState(body, url, 'تعذر قراءة الملف أو استخراج النص منه.');
+                body.innerHTML = '<div class="text-red-400 text-center py-10">تعذر تحميل الملف.</div>';
             }
         }
-
         function openItemModal(index) {
             const it = getCurrentItems()[index];
-            document.getElementById('modalBadge').textContent = currentTab === 'lectures' ? 'محتوى المحاضرة' : 'محتوى السكشن والشيت';
+            document.getElementById('modalBadge').textContent = currentTab === 'lectures' ? 'محتوى المحاضرة' : 'محتوى السكشن';
             document.getElementById('modalTitle').textContent = it.title;
             document.getElementById('contentModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
             renderToken++;
             renderPdf(it.file, document.getElementById('modalBody'), renderToken);
         }
-
-        function closeContentModal() {
-            renderToken++;
-            document.getElementById('contentModal').classList.add('hidden');
-            document.getElementById('modalBody').innerHTML = '';
-            document.body.style.overflow = '';
-        }
-
+        function closeContentModal() { renderToken++; document.getElementById('contentModal').classList.add('hidden'); document.getElementById('modalBody').innerHTML = ''; document.body.style.overflow = ''; }
         function changeLessonTextSize(step) {
             lessonTextSize = Math.min(22, Math.max(14, lessonTextSize + step * 2));
             localStorage.setItem('study-site-lesson-text-size', String(lessonTextSize));
-            document.querySelectorAll('.lesson-copy').forEach(content => content.style.setProperty('--lesson-font-size', `${lessonTextSize}px`));
+            document.querySelectorAll('.lesson-copy').forEach(c => c.style.setProperty('--lesson-font-size', `${lessonTextSize}px`));
         }
-
         function openAboutModal() { document.getElementById('aboutModal').classList.remove('hidden'); }
         function closeAboutModal() { document.getElementById('aboutModal').classList.add('hidden'); }
-
         function openMaterialsModal() {
             const listEl = document.getElementById('materialsListModal');
             listEl.innerHTML = '';
-            naturalSort(Object.values(subjectsData)).forEach(sub => {
+            Object.values(subjectsData).forEach(sub => {
                 const row = document.createElement('div');
                 row.className = 'p-3 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between hover:border-slate-700 cursor-pointer transition';
                 row.onclick = () => { closeMaterialsModal(); selectSubject(sub.id); };
-                row.innerHTML = `
-                    <div class="flex items-center space-x-3 space-x-reverse">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-tr ${sub.color} flex items-center justify-center text-white text-sm"><i class="fa-solid ${sub.icon}"></i></div>
-                        <div>
-                            <span class="font-bold text-white text-sm block">${sub.title}</span>
-                            <span class="text-xs text-slate-400">${sub.lectures.length} محاضرات • ${sub.sections.length} سكاشن</span>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-arrow-left text-slate-400 text-sm"></i>`;
+                row.innerHTML = `<div class="flex items-center space-x-3 space-x-reverse"><div class="w-10 h-10 rounded-lg bg-gradient-to-tr ${sub.color} flex items-center justify-center text-white text-sm"><i class="fa-solid ${sub.icon}"></i></div><div><span class="font-bold text-white text-sm block">${sub.title}</span><span class="text-xs text-slate-400">${sub.lectures.length} محاضرات • ${sub.sections.length} سكاشن</span></div></div><i class="fa-solid fa-arrow-left text-slate-400 text-sm"></i>`;
                 listEl.appendChild(row);
             });
             document.getElementById('materialsModal').classList.remove('hidden');
         }
         function closeMaterialsModal() { document.getElementById('materialsModal').classList.add('hidden'); }
-
-        function clearGlobalSearch() {
-            const input = document.getElementById('globalSearchInput');
-            input.value = '';
-            performGlobalSearch();
-            input.focus();
-        }
-
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            const toggle = document.getElementById('mobileMenuToggle');
-            const isOpen = menu.classList.toggle('hidden') === false;
-            toggle.setAttribute('aria-expanded', String(isOpen));
-        }
-
-        function setTheme(isLight) {
-            document.body.classList.toggle('light-theme', isLight);
-            const toggle = document.getElementById('themeToggle');
-            toggle.innerHTML = `<i class="fa-solid ${isLight ? 'fa-moon' : 'fa-sun'} text-lg" aria-hidden="true"></i>`;
-        }
-
+        function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
         function toggleTheme() {
             const isLight = !document.body.classList.contains('light-theme');
+            document.body.classList.toggle('light-theme', isLight);
             localStorage.setItem('study-site-light-theme', String(isLight));
-            setTheme(isLight);
         }
-
-        setTheme(localStorage.getItem('study-site-light-theme') === 'true');
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') { closeContentModal(); closeAboutModal(); closeMaterialsModal(); }
-        });
-
-        document.getElementById('globalSearchInput').addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') performGlobalSearch();
-        });
-
+        if (localStorage.getItem('study-site-light-theme') === 'true') document.body.classList.add('light-theme');
         window.onload = renderHome;
     </script>
 </body>
