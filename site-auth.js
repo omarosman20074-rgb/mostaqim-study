@@ -6,7 +6,7 @@
 
     const byId = id => document.getElementById(id);
 
-    // فتح الموقع فوراً للجميع بدون أي شاشات تسجيل دخول
+    // فتح الموقع فوراً للجميع بدون شاشات تسجيل دخول
     function forcePublicAccess() {
         document.body.classList.add('site-access-granted');
         document.querySelectorAll('[data-protected-content]').forEach(element => { element.hidden = false; });
@@ -31,7 +31,7 @@
             });
             window.siteSupabase = client;
 
-            // التحقق التلقائي من هويتك كأدمن رئيسي عبر الـ ownerEmail
+            // التحقق التلقائي منك كأدمن رئيسي
             try {
                 const { data: { session } } = await client.auth.getSession();
                 const userEmail = session?.user?.email || '';
@@ -174,7 +174,10 @@
     }
 
     function getStoragePath(filePath) {
-        return decodeURIComponent(filePath).replace(/^publish-ready\//, '').replace(/^\/+/, '');
+        // استخراج اسم الملف الأخير فقط للبحث المباشر في الـ Bucket لو كان مرفوعاً مباشرة
+        const clean = decodeURIComponent(filePath).replace(/^publish-ready\//, '').replace(/^\/+/, '');
+        const parts = clean.split('/');
+        return parts[parts.length - 1];
     }
 
     window.isSiteAdmin = () => isSuperAdmin;
@@ -197,14 +200,14 @@
         if (error) throw error;
     };
 
-    // دالة تحميل ملفات الـ PDF عبر الرابط المباشر العام من سوبابيس (Public URL)
+    // دالة التحميل الذكية والمعدلة لجلب الملفات من سوبابيس أو محلياً
     window.loadProtectedPdf = async function (filePath) {
-        const cleanPath = getStoragePath(filePath);
-        
+        const fileName = getStoragePath(filePath);
+
+        // 1. المحاولة الأولى: عبر الرابط العام المباشر من سوبابيس باستخدام اسم الملف مباشرة
         if (client) {
             try {
-                // جلب الرابط العام المباشر من سوبابيس طالما الـ Bucket عام
-                const { data } = client.storage.from(bucketName).getPublicUrl(cleanPath);
+                const { data } = client.storage.from(bucketName).getPublicUrl(fileName);
                 if (data?.publicUrl) {
                     const response = await fetch(data.publicUrl);
                     if (response.ok) {
@@ -214,7 +217,7 @@
             } catch (e) {}
         }
 
-        // محاولة تحميل الملف محلياً كخيار بديل
+        // 2. المحاولة الثانية: جلب الملف محلياً من مجلد المشروع
         try {
             const response = await fetch(filePath);
             if (response.ok) {
