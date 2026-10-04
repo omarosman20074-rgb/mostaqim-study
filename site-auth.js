@@ -5,29 +5,21 @@
 
     const byId = id => document.getElementById(id);
 
-    // فتح الموقع فوراً للجميع بدون أي قيود أو شاشات تسجيل دخول
-    function grantPublicAccess() {
+    // فتح الموقع فوراً للجميع بدون أي شاشات تسجيل دخول
+    function forcePublicAccess() {
         document.body.classList.add('site-access-granted');
         document.querySelectorAll('[data-protected-content]').forEach(element => { element.hidden = false; });
-        byId('accessGate')?.classList.add('hidden');
-        
-        // إظهار زر لوحة الأدمن فقط للمالك الرئيسي (Super Admin) بناءً على الـ ownerEmail
-        const userEmail = window.SUPABASE_CURRENT_USER_EMAIL || '';
-        const isOwner = config.ownerEmail && userEmail.toLowerCase() === config.ownerEmail.toLowerCase();
-
-        // كمثال هنا سنجعل زر الأدمن يظهر إذا كان مسجلاً أو سنجعله يظهر دائماً للمالك لتتمكن من إدارته
-        // للتحكم الأمني، سنتيح زر الأدمن لو كان الإيميل هو المالك أو متاحاً للإدارة
-        if (isOwner) {
-            byId('adminAccessButton')?.classList.remove('hidden');
-        } else {
-            // إن كنت تريد إظهار زر الأدمن لك فقط عندما تسجل دخولك، أو إظهاره دائماً
-            byId('adminAccessButton')?.classList.remove('hidden');
+        const gate = byId('accessGate');
+        if (gate) {
+            gate.style.display = 'none';
+            gate.classList.add('hidden');
         }
     }
 
     async function initialize() {
+        forcePublicAccess();
+
         if (!config.url || !config.anonKey || config.url.includes('YOUR_')) {
-            grantPublicAccess();
             return;
         }
 
@@ -36,16 +28,8 @@
                 auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true }
             });
             window.siteSupabase = client;
-
-            try {
-                const { data: { session } } = await client.auth.getSession();
-                if (session?.user?.email) {
-                    window.SUPABASE_CURRENT_USER_EMAIL = session.user.email;
-                }
-            } catch (e) {}
         }
 
-        grantPublicAccess();
         setupSuperAdminPanel();
     }
 
@@ -71,24 +55,30 @@
 
         const container = document.createElement('div');
         container.id = 'superAdminManagerContainer';
-        container.className = 'mt-4 pt-4 border-t border-slate-700 space-y-4';
+        container.className = 'space-y-4';
         container.innerHTML = `
-            <h3 class="text-sm font-bold text-amber-400">إدارة مشرفي الموقع (الأدمنز)</h3>
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <h3 class="text-sm font-bold text-amber-400">إدارة مشرفي الموقع (الأدمنز)</h3>
+            </div>
             <div class="flex gap-2">
-                <input type="email" id="newAdminEmailInput" placeholder="أدخل إيميل المشرف الجديد" class="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-amber-500 focus:outline-none" />
+                <input type="email" id="newAdminEmailInput" placeholder="أدخل إيميل المشرف الجديد (example@gmail.com)" class="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-amber-500 focus:outline-none" />
                 <button id="addAdminBtn" type="button" class="rounded-xl bg-amber-600 px-4 py-2 text-sm font-bold text-white hover:bg-amber-500 transition">تعيين كأدمن</button>
             </div>
             <p id="adminManageStatus" class="text-xs font-semibold"></p>
             <div class="space-y-2 mt-2">
                 <h4 class="text-xs font-bold text-slate-300">قائمة الأدمنز الحاليين:</h4>
-                <div id="adminsListContainer" class="space-y-1 max-h-40 overflow-y-auto"></div>
+                <div id="adminsListContainer" class="space-y-2 max-h-48 overflow-y-auto"></div>
             </div>
         `;
 
         panel.appendChild(container);
 
         byId('addAdminBtn').onclick = async () => {
-            if (!client) return;
+            if (!client) {
+                byId('adminManageStatus').textContent = 'قاعدة البيانات غير متصلة.';
+                byId('adminManageStatus').style.color = '#fca5a5';
+                return;
+            }
             const input = byId('newAdminEmailInput');
             const statusEl = byId('adminManageStatus');
             const emailToAdd = input.value.trim().toLowerCase();
@@ -135,24 +125,24 @@
         listContainer.innerHTML = '';
         data.forEach(admin => {
             const row = document.createElement('div');
-            row.className = 'flex items-center justify-between bg-slate-950 p-2 rounded-lg text-xs';
+            row.className = 'flex items-center justify-between bg-slate-950 p-2.5 rounded-xl text-xs border border-slate-800';
             
             const emailSpan = document.createElement('span');
-            emailSpan.className = 'text-white';
+            emailSpan.className = 'text-white font-medium';
             emailSpan.textContent = admin.email || admin.user_id;
 
             row.appendChild(emailSpan);
 
-            // حماية المالك الرئيسي من الحذف
+            // حماية المالك الرئيسي من الحذف بناءً على الـ ownerEmail
             if (config.ownerEmail && admin.email && admin.email.toLowerCase() === config.ownerEmail.toLowerCase()) {
                 const badge = document.createElement('span');
-                badge.className = 'text-amber-400 font-bold';
+                badge.className = 'text-amber-400 font-bold bg-amber-500/10 px-2 py-1 rounded';
                 badge.textContent = 'المالك الرئيسي';
                 row.appendChild(badge);
             } else {
                 const removeBtn = document.createElement('button');
                 removeBtn.type = 'button';
-                removeBtn.className = 'bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded';
+                removeBtn.className = 'bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white px-2.5 py-1 rounded-lg transition';
                 removeBtn.textContent = 'إزالة الصلاحية';
                 removeBtn.onclick = async () => {
                     if (confirm(`هل أنت متأكد من إزالة صلاحية الأدمن عن ${admin.email || 'هذا المستخدم'}؟`)) {
