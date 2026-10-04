@@ -1,4 +1,3 @@
-
 Pdf extras · JS
 (function () {
     function mergeLineSegments(segments, vertical) {
@@ -304,4 +303,3 @@ Pdf extras · JS
         return section;
     };
 })();
- 
