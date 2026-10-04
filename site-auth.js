@@ -1,12 +1,13 @@
 (function () {
     const config = window.SUPABASE_CONFIG || {};
-    const bucketName = 'pdf-files';
+    const bucketName = 'pdf-files'; // تأكد أن هذا هو اسم الـ Bucket الفعلي في Supabase لدول الملفات
     let client = null;
+    let isAdmin = false;
 
     const byId = id => document.getElementById(id);
 
-    // فتح الموقع فوراً للجميع بدون أي شاشات تسجيل دخول
-    function forcePublicAccess() {
+    // السماح للجميع بفتح الموقع وقراءة المحتوى فوراً
+    function grantPublicAccess() {
         document.body.classList.add('site-access-granted');
         document.querySelectorAll('[data-protected-content]').forEach(element => { element.hidden = false; });
         const gate = byId('accessGate');
@@ -17,7 +18,7 @@
     }
 
     async function initialize() {
-        forcePublicAccess();
+        grantPublicAccess();
 
         if (!config.url || !config.anonKey || config.url.includes('YOUR_')) {
             return;
@@ -28,12 +29,31 @@
                 auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true }
             });
             window.siteSupabase = client;
+
+            // التحقق التلقائي من هويتك كأدمن رئيسي عبر الـ ownerEmail
+            try {
+                const { data: { session } } = await client.auth.getSession();
+                if (session?.user?.email) {
+                    const email = session.user.email.toLowerCase();
+                    if (config.ownerEmail && email === config.ownerEmail.toLowerCase()) {
+                        isAdmin = true;
+                        byId('adminAccessButton')?.classList.remove('hidden');
+                    } else {
+                        // التحقق من جدول الأدمنز
+                        const { data } = await client.from('site_admins').select('email').eq('email', email).maybeSingle();
+                        if (data) {
+                            isAdmin = true;
+                            byId('adminAccessButton')?.classList.remove('hidden');
+                        }
+                    }
+                }
+            } catch (e) {}
         }
 
         setupSuperAdminPanel();
     }
 
-    // إعداد واجهة إضافة وإزالة الأدمنز داخل لوحة التحكم
+    // إعداد لوحة تحكم الأدمن لإضافة وإزالة المشرفين
     function setupSuperAdminPanel() {
         const panel = byId('adminAccessPanel');
         const adminBtn = byId('adminAccessButton');
@@ -74,11 +94,7 @@
         panel.appendChild(container);
 
         byId('addAdminBtn').onclick = async () => {
-            if (!client) {
-                byId('adminManageStatus').textContent = 'قاعدة البيانات غير متصلة.';
-                byId('adminManageStatus').style.color = '#fca5a5';
-                return;
-            }
+            if (!client) return;
             const input = byId('newAdminEmailInput');
             const statusEl = byId('adminManageStatus');
             const emailToAdd = input.value.trim().toLowerCase();
@@ -133,7 +149,6 @@
 
             row.appendChild(emailSpan);
 
-            // حماية المالك الرئيسي من الحذف بناءً على الـ ownerEmail
             if (config.ownerEmail && admin.email && admin.email.toLowerCase() === config.ownerEmail.toLowerCase()) {
                 const badge = document.createElement('span');
                 badge.className = 'text-amber-400 font-bold bg-amber-500/10 px-2 py-1 rounded';
@@ -161,7 +176,7 @@
         return decodeURIComponent(filePath).replace(/^publish-ready\//, '').replace(/^\/+/, '');
     }
 
-    window.isSiteAdmin = () => true;
+    window.isSiteAdmin = () => isAdmin;
 
     window.loadLessonTextOverride = async function (filePath, pageNumber) {
         if (!client) return null;
@@ -174,18 +189,28 @@
     };
 
     window.saveLessonTextOverride = async function (filePath, pageNumber, textContent, highlights) {
-        if (!client) throw new Error('قاعدة البيانات غير متصلة.');
+        if (!isAdmin) throw new Error('التعديل متاح للمسؤولين فقط.');
         const { error } = await client.from('lesson_text_overrides').upsert({
             storage_path: getStoragePath(filePath), page_number: pageNumber, text_content: textContent, highlights: highlights || [], updated_at: new Date().toISOString()
         }, { onConflict: 'storage_path,page_number' });
         if (error) throw error;
     };
 
+    // دالة تحميل ملفات الـ PDF مع دعم الـ Fallback في حال لم تكن في Supabase Storage
     window.loadProtectedPdf = async function (filePath) {
-        if (!client) throw new Error('قاعدة البيانات غير متصلة.');
-        const { data, error } = await client.storage.from(bucketName).download(getStoragePath(filePath));
-        if (error) throw error;
-        return new Uint8Array(await data.arrayBuffer());
+        const cleanPath = getStoragePath(filePath);
+        if (client) {
+            try {
+                const { data, error } = await client.storage.from(bucketName).download(cleanPath);
+                if (!error && data) {
+                    return new Uint8Array(await data.arrayBuffer());
+                }
+            } catch (e) {}
+        }
+        // محاولة جلب الملف محلياً من المشروع مباشرة إن لم يكن في التخزين السحابي
+        const response = await fetch(filePath);
+        if (!response.ok) throw new Error('تعذر تحميل ملف الـ PDF.');
+        return new Uint8Array(await response.arrayBuffer());
     };
 
     window.addEventListener('DOMContentLoaded', initialize, { once: true });
