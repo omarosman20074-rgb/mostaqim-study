@@ -1,4 +1,3 @@
-Site auth · JS
 (function () {
     const config = window.SUPABASE_CONFIG || {};
     const bucketName = 'pdf-files';
