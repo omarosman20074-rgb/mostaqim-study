@@ -2,11 +2,12 @@
     const config = window.SUPABASE_CONFIG || {};
     const bucketName = 'pdf-files';
     let client = null;
-    let isSuperAdmin = false;
+    let currentUserId = null;
+    let isAdmin = true; // السماح بصلاحيات المسؤول
 
     const byId = id => document.getElementById(id);
 
-    // فتح الموقع فوراً للجميع بدون شاشات تسجيل دخول
+    // فتح الموقع فوراً للجميع بدون أي شاشات تسجيل دخول
     function forcePublicAccess() {
         document.body.classList.add('site-access-granted');
         document.querySelectorAll('[data-protected-content]').forEach(element => { element.hidden = false; });
@@ -15,6 +16,8 @@
             gate.style.display = 'none';
             gate.classList.add('hidden');
         }
+        byId('adminAccessButton')?.classList.remove('hidden');
+        byId('siteSignOutButton')?.classList.add('hidden');
     }
 
     async function initialize() {
@@ -31,19 +34,13 @@
             });
             window.siteSupabase = client;
 
-            // التحقق التلقائي منك كأدمن رئيسي
             try {
                 const { data: { session } } = await client.auth.getSession();
-                const userEmail = session?.user?.email || '';
-                
-                if (config.ownerEmail && userEmail.toLowerCase() === config.ownerEmail.toLowerCase()) {
-                    isSuperAdmin = true;
-                    byId('adminAccessButton')?.classList.remove('hidden');
-                } else if (userEmail) {
-                    const { data } = await client.from('site_admins').select('email').eq('email', userEmail.toLowerCase()).maybeSingle();
-                    if (data) {
-                        isSuperAdmin = true;
-                        byId('adminAccessButton')?.classList.remove('hidden');
+                if (session?.user) {
+                    currentUserId = session.user.id;
+                    const userEmail = session.user.email || '';
+                    if (config.ownerEmail && userEmail.toLowerCase() === config.ownerEmail.toLowerCase()) {
+                        isAdmin = true;
                     }
                 }
             } catch (e) {}
@@ -54,12 +51,11 @@
 
     // إعداد لوحة تحكم الأدمن لإضافة وإزالة المشرفين
     function setupSuperAdminPanel() {
-        const panel = byId('adminAccessPanel');
         const adminBtn = byId('adminAccessButton');
-        if (!panel || !adminBtn) return;
+        const panel = byId('adminAccessPanel');
+        if (!adminBtn || !panel) return;
 
         adminBtn.classList.remove('hidden');
-
         adminBtn.onclick = () => {
             panel.classList.toggle('hidden');
             if (!panel.classList.contains('hidden')) {
@@ -76,13 +72,13 @@
 
         const container = document.createElement('div');
         container.id = 'superAdminManagerContainer';
-        container.className = 'space-y-4';
+        container.className = 'space-y-4 mt-4 pt-4 border-t border-slate-700';
         container.innerHTML = `
-            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+            <div class="flex items-center justify-between">
                 <h3 class="text-sm font-bold text-amber-400">إدارة مشرفي الموقع (الأدمنز)</h3>
             </div>
             <div class="flex gap-2">
-                <input type="email" id="newAdminEmailInput" placeholder="أدخل إيميل المشرف الجديد (example@gmail.com)" class="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-amber-500 focus:outline-none" />
+                <input type="email" id="newAdminEmailInput" placeholder="أدخل إيميل المشرف الجديد" class="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-amber-500 focus:outline-none" />
                 <button id="addAdminBtn" type="button" class="rounded-xl bg-amber-600 px-4 py-2 text-sm font-bold text-white hover:bg-amber-500 transition">تعيين كأدمن</button>
             </div>
             <p id="adminManageStatus" class="text-xs font-semibold"></p>
@@ -174,18 +170,22 @@
     }
 
     function getStoragePath(filePath) {
-        // استخراج اسم الملف الأخير فقط للبحث المباشر في الـ Bucket لو كان مرفوعاً مباشرة
         const clean = decodeURIComponent(filePath).replace(/^publish-ready\//, '').replace(/^\/+/, '');
         const parts = clean.split('/');
         return parts[parts.length - 1];
     }
 
-    window.isSiteAdmin = () => isSuperAdmin;
+    window.isSiteAdmin = () => isAdmin;
 
     window.loadLessonTextOverride = async function (filePath, pageNumber) {
         if (!client) return null;
         try {
-            const { data } = await client.from('lesson_text_overrides').select('text_content, highlights').eq('storage_path', getStoragePath(filePath)).eq('page_number', pageNumber).maybeSingle();
+            const { data } = await client
+                .from('lesson_text_overrides')
+                .select('text_content, highlights')
+                .eq('storage_path', getStoragePath(filePath))
+                .eq('page_number', pageNumber)
+                .maybeSingle();
             return data ? { text: data.text_content, highlights: data.highlights || [] } : null;
         } catch (e) {
             return null;
@@ -193,18 +193,24 @@
     };
 
     window.saveLessonTextOverride = async function (filePath, pageNumber, textContent, highlights) {
-        if (!isSuperAdmin) throw new Error('التعديل متاح للمسؤولين فقط.');
-        const { error } = await client.from('lesson_text_overrides').upsert({
-            storage_path: getStoragePath(filePath), page_number: pageNumber, text_content: textContent, highlights: highlights || [], updated_at: new Date().toISOString()
-        }, { onConflict: 'storage_path,page_number' });
+        if (!client) throw new Error('قاعدة البيانات غير متصلة.');
+        const { error } = await client
+            .from('lesson_text_overrides')
+            .upsert({
+                storage_path: getStoragePath(filePath),
+                page_number: pageNumber,
+                text_content: textContent,
+                highlights: Array.isArray(highlights) ? highlights : [],
+                updated_by: currentUserId,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'storage_path,page_number' });
         if (error) throw error;
     };
 
-    // دالة التحميل الذكية والمعدلة لجلب الملفات من سوبابيس أو محلياً
+    // تحميل ملفات الـ PDF بروابط سوبابيس العامة المباشرة
     window.loadProtectedPdf = async function (filePath) {
         const fileName = getStoragePath(filePath);
 
-        // 1. المحاولة الأولى: عبر الرابط العام المباشر من سوبابيس باستخدام اسم الملف مباشرة
         if (client) {
             try {
                 const { data } = client.storage.from(bucketName).getPublicUrl(fileName);
@@ -217,7 +223,7 @@
             } catch (e) {}
         }
 
-        // 2. المحاولة الثانية: جلب الملف محلياً من مجلد المشروع
+        // خيار بديل في حال لم يتواجد في السحاب
         try {
             const response = await fetch(filePath);
             if (response.ok) {
@@ -225,7 +231,7 @@
             }
         } catch (e) {}
 
-        throw new Error(`تعذر تحميل الملف: ${filePath}`);
+        throw new Error('تعذر تحميل الملف.');
     };
 
     window.addEventListener('DOMContentLoaded', initialize, { once: true });
