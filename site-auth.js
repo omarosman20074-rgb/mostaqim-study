@@ -1,13 +1,13 @@
 (function () {
     const config = window.SUPABASE_CONFIG || {};
-    const bucketName = 'pdf-files'; // تأكد أن هذا هو اسم الـ Bucket الفعلي في Supabase لدول الملفات
+    const bucketName = 'pdf-files';
     let client = null;
-    let isAdmin = false;
+    let isSuperAdmin = false;
 
     const byId = id => document.getElementById(id);
 
-    // السماح للجميع بفتح الموقع وقراءة المحتوى فوراً
-    function grantPublicAccess() {
+    // فتح الموقع فوراً للجميع بدون أي شاشات تسجيل دخول
+    function forcePublicAccess() {
         document.body.classList.add('site-access-granted');
         document.querySelectorAll('[data-protected-content]').forEach(element => { element.hidden = false; });
         const gate = byId('accessGate');
@@ -18,9 +18,10 @@
     }
 
     async function initialize() {
-        grantPublicAccess();
+        forcePublicAccess();
 
         if (!config.url || !config.anonKey || config.url.includes('YOUR_')) {
+            setupSuperAdminPanel();
             return;
         }
 
@@ -33,18 +34,16 @@
             // التحقق التلقائي من هويتك كأدمن رئيسي عبر الـ ownerEmail
             try {
                 const { data: { session } } = await client.auth.getSession();
-                if (session?.user?.email) {
-                    const email = session.user.email.toLowerCase();
-                    if (config.ownerEmail && email === config.ownerEmail.toLowerCase()) {
-                        isAdmin = true;
+                const userEmail = session?.user?.email || '';
+                
+                if (config.ownerEmail && userEmail.toLowerCase() === config.ownerEmail.toLowerCase()) {
+                    isSuperAdmin = true;
+                    byId('adminAccessButton')?.classList.remove('hidden');
+                } else if (userEmail) {
+                    const { data } = await client.from('site_admins').select('email').eq('email', userEmail.toLowerCase()).maybeSingle();
+                    if (data) {
+                        isSuperAdmin = true;
                         byId('adminAccessButton')?.classList.remove('hidden');
-                    } else {
-                        // التحقق من جدول الأدمنز
-                        const { data } = await client.from('site_admins').select('email').eq('email', email).maybeSingle();
-                        if (data) {
-                            isAdmin = true;
-                            byId('adminAccessButton')?.classList.remove('hidden');
-                        }
                     }
                 }
             } catch (e) {}
@@ -58,6 +57,8 @@
         const panel = byId('adminAccessPanel');
         const adminBtn = byId('adminAccessButton');
         if (!panel || !adminBtn) return;
+
+        adminBtn.classList.remove('hidden');
 
         adminBtn.onclick = () => {
             panel.classList.toggle('hidden');
@@ -176,7 +177,7 @@
         return decodeURIComponent(filePath).replace(/^publish-ready\//, '').replace(/^\/+/, '');
     }
 
-    window.isSiteAdmin = () => isAdmin;
+    window.isSiteAdmin = () => isSuperAdmin;
 
     window.loadLessonTextOverride = async function (filePath, pageNumber) {
         if (!client) return null;
@@ -189,28 +190,39 @@
     };
 
     window.saveLessonTextOverride = async function (filePath, pageNumber, textContent, highlights) {
-        if (!isAdmin) throw new Error('التعديل متاح للمسؤولين فقط.');
+        if (!isSuperAdmin) throw new Error('التعديل متاح للمسؤولين فقط.');
         const { error } = await client.from('lesson_text_overrides').upsert({
             storage_path: getStoragePath(filePath), page_number: pageNumber, text_content: textContent, highlights: highlights || [], updated_at: new Date().toISOString()
         }, { onConflict: 'storage_path,page_number' });
         if (error) throw error;
     };
 
-    // دالة تحميل ملفات الـ PDF مع دعم الـ Fallback في حال لم تكن في Supabase Storage
+    // دالة تحميل ملفات الـ PDF عبر الرابط المباشر العام من سوبابيس (Public URL)
     window.loadProtectedPdf = async function (filePath) {
         const cleanPath = getStoragePath(filePath);
+        
         if (client) {
             try {
-                const { data, error } = await client.storage.from(bucketName).download(cleanPath);
-                if (!error && data) {
-                    return new Uint8Array(await data.arrayBuffer());
+                // جلب الرابط العام المباشر من سوبابيس طالما الـ Bucket عام
+                const { data } = client.storage.from(bucketName).getPublicUrl(cleanPath);
+                if (data?.publicUrl) {
+                    const response = await fetch(data.publicUrl);
+                    if (response.ok) {
+                        return new Uint8Array(await response.arrayBuffer());
+                    }
                 }
             } catch (e) {}
         }
-        // محاولة جلب الملف محلياً من المشروع مباشرة إن لم يكن في التخزين السحابي
-        const response = await fetch(filePath);
-        if (!response.ok) throw new Error('تعذر تحميل ملف الـ PDF.');
-        return new Uint8Array(await response.arrayBuffer());
+
+        // محاولة تحميل الملف محلياً كخيار بديل
+        try {
+            const response = await fetch(filePath);
+            if (response.ok) {
+                return new Uint8Array(await response.arrayBuffer());
+            }
+        } catch (e) {}
+
+        throw new Error(`تعذر تحميل الملف: ${filePath}`);
     };
 
     window.addEventListener('DOMContentLoaded', initialize, { once: true });
