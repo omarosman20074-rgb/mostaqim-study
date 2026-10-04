@@ -6,6 +6,7 @@
     let currentUserId = null;
     let isAdmin = false;
     let handlingUserId = null;
+    let currentUserEmail = '';
  
     const byId = id => document.getElementById(id);
     const setMessage = (element, text, kind = 'info') => {
@@ -83,6 +84,7 @@
     async function processUserSession(user) {
  
         currentUserId = user.id;
+        currentUserEmail = user.email || '';
         byId('accessForm')?.classList.add('hidden');
         byId('accessSessionActions')?.classList.remove('hidden');
         if (byId('accessAccountEmail')) byId('accessAccountEmail').textContent = user.email || '';
@@ -187,6 +189,139 @@
         });
     }
  
+    /* ---------- إدارة المشرفين (للمالك الرئيسي فقط) ---------- */
+    function isOwner() {
+        return Boolean(isAdmin && currentUserEmail && config.ownerEmail &&
+            currentUserEmail.toLowerCase() === String(config.ownerEmail).toLowerCase());
+    }
+ 
+    function adminErrorText(error) {
+        const message = String(error?.message || '');
+        if (message.includes('user_not_found')) return 'مفيش حساب بالإيميل ده. لازم الشخص يفتح الموقع ويسجّل دخول بإيميله مرة واحدة الأول.';
+        if (message.includes('not_owner')) return 'الصلاحية دي للمالك الرئيسي بس.';
+        if (message.includes('cannot_remove_owner')) return 'مينفعش تشيل المالك الرئيسي.';
+        if (message.includes('Could not find the function')) return 'لسه ما شغّلتش ملف SQL الخاص بالمشرفين في Supabase.';
+        return 'حصل خطأ: ' + message;
+    }
+ 
+    function renderAdminManager() {
+        const panel = byId('adminAccessPanel');
+        if (!panel || !client || !isOwner()) return;
+        if (byId('adminManager')) {
+            loadAdmins();
+            return;
+        }
+ 
+        const box = document.createElement('div');
+        box.id = 'adminManager';
+        box.className = 'mt-6 space-y-3 border-t border-slate-700 pt-4';
+ 
+        const title = document.createElement('h3');
+        title.className = 'font-bold text-white';
+        title.textContent = 'المشرفون';
+        const hint = document.createElement('p');
+        hint.className = 'text-xs text-slate-400';
+        hint.textContent = 'اكتب إيميل شخص سبق وسجّل دخول للموقع لتعيينه مشرفًا. أنت المالك الرئيسي ولا يمكن إزالتك.';
+ 
+        const row = document.createElement('div');
+        row.className = 'flex flex-wrap gap-2';
+        const input = document.createElement('input');
+        input.id = 'newAdminEmail';
+        input.type = 'email';
+        input.dir = 'ltr';
+        input.placeholder = 'name@example.com';
+        input.className = 'access-input flex-1';
+        input.style.minWidth = '12rem';
+        const addButton = document.createElement('button');
+        addButton.type = 'button';
+        addButton.className = 'access-approve rounded-xl px-4 py-2 text-sm font-bold';
+        addButton.textContent = 'تعيين كمشرف';
+        row.append(input, addButton);
+ 
+        const status = document.createElement('p');
+        status.id = 'adminManagerStatus';
+        status.className = 'access-state text-sm hidden';
+        status.setAttribute('role', 'status');
+ 
+        const list = document.createElement('div');
+        list.id = 'adminManagerList';
+        list.className = 'divide-y divide-slate-700';
+ 
+        box.append(title, hint, row, status, list);
+        panel.appendChild(box);
+ 
+        addButton.addEventListener('click', async () => {
+            const email = input.value.trim().toLowerCase();
+            if (!email) {
+                setMessage(status, 'اكتب الإيميل الأول.', 'error');
+                return;
+            }
+            addButton.disabled = true;
+            setMessage(status, 'جارٍ التعيين...');
+            const { error } = await client.rpc('add_site_admin', { admin_email: email });
+            addButton.disabled = false;
+            if (error) {
+                console.error(error);
+                setMessage(status, adminErrorText(error), 'error');
+                return;
+            }
+            input.value = '';
+            setMessage(status, 'تم تعيين المشرف.');
+            loadAdmins();
+            loadAccessRequests();
+        });
+ 
+        loadAdmins();
+    }
+ 
+    async function loadAdmins() {
+        const list = byId('adminManagerList');
+        const status = byId('adminManagerStatus');
+        if (!list || !client || !isOwner()) return;
+        list.replaceChildren();
+        const { data, error } = await client.rpc('list_site_admins');
+        if (error) {
+            console.error(error);
+            setMessage(list, adminErrorText(error), 'error');
+            return;
+        }
+        (data || []).forEach(admin => {
+            const row = document.createElement('div');
+            row.className = 'access-request-row';
+            const details = document.createElement('div');
+            const email = document.createElement('strong');
+            email.dir = 'ltr';
+            email.textContent = admin.mail || admin.uid;
+            details.appendChild(email);
+            const isMain = String(admin.mail || '').toLowerCase() === String(config.ownerEmail).toLowerCase();
+            const tag = document.createElement('span');
+            tag.textContent = isMain ? 'المالك الرئيسي' : 'مشرف';
+            details.appendChild(tag);
+            row.appendChild(details);
+            if (!isMain) {
+                const actions = document.createElement('div');
+                actions.className = 'access-request-actions';
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'access-reject';
+                remove.textContent = 'إزالة الإشراف';
+                remove.onclick = async () => {
+                    if (!window.confirm('إزالة صلاحية الإشراف عن ' + admin.mail + '؟')) return;
+                    const { error: removeError } = await client.rpc('remove_site_admin', { admin_email: admin.mail });
+                    if (removeError) {
+                        console.error(removeError);
+                        if (status) setMessage(status, adminErrorText(removeError), 'error');
+                        return;
+                    }
+                    loadAdmins();
+                };
+                actions.appendChild(remove);
+                row.appendChild(actions);
+            }
+            list.appendChild(row);
+        });
+    }
+ 
     async function reviewRequest(requestId, decision) {
         const { error } = await client.rpc('review_site_access', { request_id: requestId, decision });
         if (error) {
@@ -238,7 +373,10 @@
         byId('adminAccessButton')?.addEventListener('click', () => {
             const panel = byId('adminAccessPanel');
             panel.classList.toggle('hidden');
-            if (!panel.classList.contains('hidden')) loadAccessRequests();
+            if (!panel.classList.contains('hidden')) {
+                loadAccessRequests();
+                renderAdminManager();
+            }
         });
         byId('refreshRequestsButton')?.addEventListener('click', loadAccessRequests);
  
