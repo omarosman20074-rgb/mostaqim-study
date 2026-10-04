@@ -121,13 +121,13 @@
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
- 
-    <section id="accessGate" class="access-gate" aria-labelledby="accessGateTitle">
+
+    <section id="accessGate" class="access-gate hidden" style="display:none" aria-labelledby="accessGateTitle">
         <div class="access-card space-y-5">
             <div>
-                <p class="text-xs font-bold text-blue-400 mb-2">موقع خاص</p>
+                <p class="text-xs font-bold text-blue-400 mb-2">تسجيل الدخول</p>
                 <h1 id="accessGateTitle" class="text-2xl font-black text-white">تسجيل الدخول وطلب الوصول</h1>
-                <p class="text-sm text-slate-300 mt-2">الدخول متاح للحسابات التي يوافق عليها مسؤول الموقع.</p>
+                <p class="text-sm text-slate-300 mt-2">الموقع مفتوح للجميع. تسجيل الدخول اختياري، ويستخدمه المشرفون.</p>
             </div>
             <form id="accessForm" class="space-y-3">
                 <label for="accessEmail" class="block text-sm font-semibold text-slate-200">البريد الإلكتروني</label>
@@ -144,7 +144,7 @@
             <p id="accessState" class="access-state text-sm" role="status" aria-live="polite"></p>
         </div>
     </section>
- 
+
     <header data-protected-content hidden class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md bg-opacity-90">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <button type="button" class="flex items-center space-x-3 space-x-reverse text-right" onclick="showHome()" aria-label="العودة إلى الرئيسية">
@@ -177,9 +177,9 @@
             <button onclick="openAboutModal(); toggleMobileMenu();" class="block w-full text-right px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">عن المنصة</button>
         </nav>
     </header>
- 
+
     <main data-protected-content hidden class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
- 
+
         <section class="mb-6">
             <button id="adminAccessButton" class="hidden rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm font-bold text-amber-300" type="button">إدارة طلبات الدخول</button>
             <div id="adminAccessPanel" class="hidden mt-3 rounded-2xl border border-slate-700 bg-slate-900 p-5">
@@ -191,7 +191,7 @@
                 <div id="adminAccessRequests" class="divide-y divide-slate-700"></div>
             </div>
         </section>
- 
+
         <div id="homeView" class="space-y-8">
             <div class="bg-gradient-to-r from-blue-900/40 via-indigo-900/30 to-slate-900 border border-blue-500/20 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
                 <div class="absolute -left-10 -bottom-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -213,7 +213,7 @@
                     </div>
                 </div>
             </div>
- 
+
             <section class="rounded-3xl border border-slate-800 bg-slate-900 p-5 sm:p-6" aria-labelledby="searchHeading">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                     <div>
@@ -234,7 +234,7 @@
                 </form>
                 <div id="searchResults" class="mt-4 hidden rounded-2xl border border-slate-800 bg-slate-950/60 p-3" role="status" aria-live="polite"></div>
             </section>
- 
+
             <div>
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-bold text-white flex items-center gap-2">
@@ -245,14 +245,14 @@
                 <div id="subjectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
             </div>
         </div>
- 
+
         <div id="subjectDetailView" class="hidden space-y-6">
             <button onclick="showHome()" class="inline-flex items-center gap-2 text-slate-400 hover:text-white bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl transition">
                 <i class="fa-solid fa-arrow-right"></i> العودة للرئيسية
             </button>
- 
+
             <div id="subjectContentHeader" class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8"></div>
- 
+
             <div class="flex border-b border-slate-800 space-x-4 space-x-reverse overflow-x-auto">
                 <button onclick="switchTab('lectures')" id="tabLecturesBtn" class="pb-3 px-4 font-bold text-base border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2 whitespace-nowrap">
                     <i class="fa-solid fa-chalkboard-user"></i> المحاضرات
@@ -261,13 +261,13 @@
                     <i class="fa-solid fa-file-pen"></i> السكاشن والشيتات
                 </button>
             </div>
- 
+
             <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8">
                 <div id="tabContentArea" class="space-y-4"></div>
             </div>
         </div>
     </main>
- 
+
     <!-- Lesson Text Modal -->
     <div id="contentModal" data-protected-content hidden class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4">
         <div role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="bg-slate-900 border border-slate-800 w-full max-w-5xl max-h-[95vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
@@ -293,11 +293,11 @@
                     </button>
                 </div>
             </div>
- 
+
             <div id="modalBody" class="p-3 sm:p-6 overflow-y-auto custom-scrollbar bg-slate-950/50 flex flex-col items-stretch gap-4 flex-grow"></div>
         </div>
     </div>
- 
+
     <div id="aboutModal" data-protected-content hidden class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div role="dialog" aria-modal="true" aria-labelledby="aboutTitle" class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl shadow-2xl p-6 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -312,7 +312,7 @@
             </div>
         </div>
     </div>
- 
+
     <div id="materialsModal" data-protected-content hidden class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div role="dialog" aria-modal="true" aria-labelledby="materialsTitle" class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl shadow-2xl p-6 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -325,23 +325,23 @@
             </div>
         </div>
     </div>
- 
+
     <footer data-protected-content hidden class="bg-slate-900 border-t border-slate-800 py-6 mt-12 text-center text-sm text-slate-400">
         <p>موقع عمر الدراسي - الفرقة الثانية 2026</p>
     </footer>
- 
+
     <script>
         /* ============================================================
            ملف المشروع الآن فيه مجلد واحد اسمه: محاضرات وسكاشن
            وكل مادة فيها مجلدها الخاص وحولها محاضرات/سكاشن PDF.
            ============================================================ */
         const FILES_DIR = '';
- 
+
         const item = (title, relativePath) => ({
             title,
             file: encodeURI(relativePath.startsWith('http') ? relativePath : FILES_DIR + relativePath)
         });
- 
+
         const subjectsData = {
             cost: {
                 id: 'cost',
@@ -484,17 +484,17 @@
                 ]
             }
         };
- 
+
         let currentActiveSubjectId = 'cost';
         let currentTab = 'lectures';
         let renderToken = 0; // يلغي أي تحميل قديم لو اتقفلت النافذة
         let lessonTextSize = Number(localStorage.getItem('study-site-lesson-text-size')) || 16;
- 
+
         /* ---------- الصفحة الرئيسية ---------- */
         function getLessonSortKey(title) {
             const ordinalMatch = title.match(/(?:المحاضرة|السكشن)\s+(الأولى|الاولى|الأول|الاول|الثانية|الثاني|الثالثة|الثالث|الرابعة|الرابع|الخامسة|الخامس|السادسة|السادس|السابعة|السابع|الثامنة|الثامن|التاسعة|التاسع|العاشرة|العاشر|\d+|[٠-٩]+)/u);
             if (!ordinalMatch) return null;
- 
+
             const ordinalValues = {
                 'الأولى': 1, 'الاولى': 1, 'الأول': 1, 'الاول': 1,
                 'الثانية': 2, 'الثاني': 2,
@@ -513,7 +513,7 @@
             const part = !partMatch ? 0 : /الثاني|الثانية/u.test(partMatch[1]) ? 2 : 1;
             return { order, part };
         }
- 
+
         function naturalSort(items) {
             const keys = new Map(items.map(item => [item, getLessonSortKey(item.title)]));
             if (items.length && [...keys.values()].every(Boolean)) {
@@ -525,7 +525,7 @@
             }
             return items.slice().sort((a, b) => a.title.localeCompare(b.title, 'ar', { numeric: true, sensitivity: 'base' }));
         }
- 
+
         function collectAllItems() {
             const items = [];
             Object.values(subjectsData).forEach(subject => {
@@ -534,25 +534,25 @@
             });
             return items;
         }
- 
+
         function openFoundResult(subjectId, kind, title, file) {
             selectSubject(subjectId);
             currentTab = kind === 'محاضرة' ? 'lectures' : 'sections';
             updateTabsUI();
             renderTabContent();
- 
+
             const list = getCurrentItems();
             const index = list.findIndex(item => item.title === title && item.file === file);
             if (index >= 0) {
                 setTimeout(() => openItemModal(index), 100);
             }
         }
- 
+
         function performGlobalSearch() {
             const input = document.getElementById('globalSearchInput');
             const searchResults = document.getElementById('searchResults');
             const query = input.value.trim();
- 
+
             if (!query) {
                 searchResults.innerHTML = '';
                 searchResults.classList.add('hidden');
@@ -560,19 +560,19 @@
                 return;
             }
             document.getElementById('clearSearchButton').classList.remove('hidden');
- 
+
             const matches = collectAllItems().filter(item => {
                 const haystack = `${item.subjectTitle} ${item.kind} ${item.title}`.toLowerCase();
                 return haystack.includes(query.toLowerCase());
             }).slice(0, 8);
- 
+
             if (!matches.length) {
                 searchResults.textContent = `لا توجد نتائج مطابقة لـ "${query}"`;
                 searchResults.classList.add('text-sm', 'text-slate-400');
                 searchResults.classList.remove('hidden');
                 return;
             }
- 
+
             searchResults.innerHTML = '';
             matches.forEach(match => {
                 const btn = document.createElement('button');
@@ -591,11 +591,11 @@
             });
             searchResults.classList.remove('hidden');
         }
- 
+
         function renderHome() {
             const grid = document.getElementById('subjectsGrid');
             grid.innerHTML = '';
- 
+
             const orderedSubjects = Object.values(subjectsData);
             const totalLectures = orderedSubjects.reduce((sum, subject) => sum + subject.lectures.length, 0);
             const totalSections = orderedSubjects.reduce((sum, subject) => sum + subject.sections.length, 0);
@@ -615,7 +615,7 @@
                     <div class="mt-2 text-2xl font-black text-white">${totalSections}</div>
                 </div>`;
             grid.parentNode.insertBefore(statsBar, grid);
- 
+
             orderedSubjects.forEach(subject => {
                 const card = document.createElement('div');
                 card.className = 'bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-3xl p-6 transition duration-300 flex flex-col justify-between shadow-xl hover:-translate-y-1 group cursor-pointer';
@@ -649,17 +649,17 @@
                 grid.appendChild(card);
             });
         }
- 
+
         function selectSubject(subjectId) {
             const subject = subjectsData[subjectId];
             if (!subject) return;
             currentActiveSubjectId = subjectId;
             currentTab = 'lectures';
             updateTabsUI();
- 
+
             document.getElementById('homeView').classList.add('hidden');
             document.getElementById('subjectDetailView').classList.remove('hidden');
- 
+
             document.getElementById('subjectContentHeader').innerHTML = `
                 <div class="flex flex-col sm:flex-row sm:items-center gap-6">
                     <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr ${subject.color} flex items-center justify-center shadow-xl flex-shrink-0">
@@ -674,31 +674,31 @@
             renderTabContent();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
- 
+
         function switchTab(tabName) {
             currentTab = tabName;
             updateTabsUI();
             renderTabContent();
         }
- 
+
         function updateTabsUI() {
             const active = 'pb-3 px-4 font-bold text-base border-b-2 border-blue-500 text-blue-400 transition flex items-center gap-2 whitespace-nowrap';
             const idle = 'pb-3 px-4 font-bold text-base border-b-2 border-transparent text-slate-400 hover:text-white transition flex items-center gap-2 whitespace-nowrap';
             document.getElementById('tabLecturesBtn').className = currentTab === 'lectures' ? active : idle;
             document.getElementById('tabSectionsBtn').className = currentTab === 'sections' ? active : idle;
         }
- 
+
         function getCurrentItems() {
             const subject = subjectsData[currentActiveSubjectId];
             return currentTab === 'lectures' ? subject.lectures : subject.sections;
         }
- 
+
         function renderTabContent() {
             const area = document.getElementById('tabContentArea');
             area.innerHTML = '';
             const typeLabel = currentTab === 'lectures' ? 'محتوى المحاضرة مكتوب' : 'محتوى السكشن مكتوب';
             const orderedItems = naturalSort(getCurrentItems());
- 
+
             orderedItems.forEach((it, index) => {
                 const el = document.createElement('div');
                 el.className = 'bg-slate-950 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4';
@@ -723,18 +723,18 @@
                 area.appendChild(el);
             });
         }
- 
+
         function showHome() {
             document.getElementById('subjectDetailView').classList.add('hidden');
             document.getElementById('homeView').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
- 
+
         /* ---------- استخراج وعرض محتوى المحاضرة ---------- */
         if (window.pdfjsLib) {
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
- 
+
         function showMissingPdfState(body, url, reason) {
             body.innerHTML = `
                 <div class="w-full max-w-xl rounded-2xl border border-amber-500/30 bg-amber-500/10 p-6 text-center">
@@ -745,13 +745,13 @@
                     </div>
                     <h4 class="text-xl font-bold text-white mb-2">تعذر استخراج المحتوى</h4>
                     <p class="text-sm text-slate-300 leading-relaxed mb-4">${reason}</p>
- 
+
                     <div class="text-right bg-slate-950/70 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 space-y-2">
                         <p><span class="text-white font-bold">المسار المتوقع:</span> <span dir="ltr" class="text-blue-300">${url}</span></p>
                     </div>
                 </div>`;
         }
- 
+
         function cleanPdfText(text) {
             return text
                 .normalize('NFKC')
@@ -782,13 +782,13 @@
                 .replace(/\n{3,}/g, '\n\n')
                 .trim();
         }
- 
+
         function extractPdfPageText(items) {
             const lines = [];
             const orderedItems = items
                 .filter(item => item.str.trim())
                 .sort((a, b) => b.transform[5] - a.transform[5] || b.transform[4] - a.transform[4]);
- 
+
             orderedItems.forEach(item => {
                 const y = item.transform[5];
                 let line = lines[lines.length - 1];
@@ -798,21 +798,21 @@
                 }
                 line.items.push(item);
             });
- 
+
             const pageText = lines.map(line => line.items
                 .sort((a, b) => b.transform[4] - a.transform[4])
                 .map(item => item.str.trim())
                 .join(' ')).join('\n');
- 
+
             return cleanPdfText(pageText);
         }
- 
+
         function isLessonHeading(line) {
             const text = line.trim();
             if (text.length < 3 || text.length > 100 || /[.!؟؛،]$/.test(text)) return false;
             return /^(?:المحاضرة|الفصل|الباب|الوحدة|الجزء|مقدمة|أهداف|أهمية|تعريف|مفهوم|خصائص|أنواع|أقسام|عناصر|مراحل|أسباب|نتائج|شروط|مزايا|عيوب|الفرق بين|أولاً|ثانياً|ثالثاً|رابعاً|خامساً|سادساً|سابعاً|ثامناً|تاسعاً|عاشراً|\d+[.)-]|[٠-٩]+[.)-]|[أ-ي][.)-])/u.test(text);
         }
- 
+
         function removeHighlightsInRange(highlights, start, end) {
             const remaining = [];
             highlights.forEach(highlight => {
@@ -825,7 +825,7 @@
             });
             return remaining;
         }
- 
+
         function appendHighlightedLine(target, line, lineOffset, highlights) {
             const relevant = highlights
                 .filter(highlight => ['yellow', 'green', 'blue', 'orange', 'pink'].includes(highlight.color) && highlight.end > lineOffset && highlight.start < lineOffset + line.length)
@@ -844,20 +844,20 @@
             });
             target.appendChild(document.createTextNode(line.slice(cursor)));
         }
- 
+
         function renderLessonText(container, text, highlights = []) {
             const lines = text.split('\n');
             const content = document.createElement('div');
             content.className = 'lesson-copy';
             content.style.setProperty('--lesson-font-size', `${lessonTextSize}px`);
- 
+
             let textOffset = 0;
             lines.forEach(rawLine => {
                 const line = rawLine.trim();
                 const lineOffset = textOffset + rawLine.length - rawLine.trimStart().length;
                 textOffset += rawLine.length + 1;
                 if (!line) return;
- 
+
                 if (/^(?:\d+|[٠-٩]+)$/u.test(line)) {
                     const pageNumber = document.createElement('div');
                     pageNumber.className = 'lesson-page-number';
@@ -869,7 +869,7 @@
                     content.appendChild(pageNumber);
                     return;
                 }
- 
+
                 if (isLessonHeading(line)) {
                     const heading = document.createElement('h5');
                     const isMain = /^(?:المحاضرة|الفصل|الباب|الوحدة|الجزء|مقدمة)/u.test(line);
@@ -878,16 +878,16 @@
                     content.appendChild(heading);
                     return;
                 }
- 
+
                 const paragraph = document.createElement('p');
                 appendHighlightedLine(paragraph, line, lineOffset, highlights);
                 if (/^(?:[-•●▪]|\d+[.)]|[٠-٩]+[.)])\s*/u.test(line)) paragraph.className = 'lesson-bullet';
                 content.appendChild(paragraph);
             });
- 
+
             container.appendChild(content);
         }
- 
+
         async function renderEditableLessonText(container, filePath, pageNumber, originalText) {
             let currentText = originalText;
             let currentHighlights = [];
@@ -903,7 +903,7 @@
                     console.warn('تعذر تحميل النص المعدل؛ سيظهر النص الأصلي.', error);
                 }
             }
- 
+
             const display = document.createElement('div');
             function renderCurrentText() {
                 display.replaceChildren();
@@ -921,7 +921,7 @@
                 container.appendChild(display);
                 return;
             }
- 
+
             const panel = document.createElement('div');
             panel.className = 'lesson-edit-panel';
             const textarea = document.createElement('textarea');
@@ -1033,7 +1033,7 @@
             controls.append(editButton, saveButton, cancelButton, status);
             panel.append(palette, textarea, controls);
             container.append(panel, display);
- 
+
             editButton.onclick = () => {
                 textarea.value = currentText;
                 draftHighlights = currentHighlights.map(highlight => ({ ...highlight }));
@@ -1079,15 +1079,15 @@
                 }
             };
         }
- 
+
         async function renderPdf(url, body, token) {
             body.innerHTML = '<div class="text-slate-400 text-sm py-10 text-center"><i class="fa-solid fa-spinner fa-spin ml-2"></i> جاري استخراج النص...</div>';
- 
+
             if (!window.pdfjsLib) {
                 showMissingPdfState(body, url, 'مكتبة قراءة المحتوى غير متاحة. تحقق من اتصال الإنترنت ثم أعد المحاولة.');
                 return;
             }
- 
+
             try {
                 if (!window.loadProtectedPdf) throw new Error('إعداد تخزين الملفات الخاص غير مكتمل.');
                 const pdfBytes = await window.loadProtectedPdf(url);
@@ -1095,21 +1095,21 @@
                 if (token !== renderToken) return;
                 body.innerHTML = '';
                 const seenImages = new Set();
- 
+
                 for (let n = 1; n <= pdf.numPages; n++) {
                     const page = await pdf.getPage(n);
                     if (token !== renderToken) return;
- 
+
                     const content = await page.getTextContent();
                     const pageText = extractPdfPageText(content.items);
                     const pageSection = document.createElement('section');
                     pageSection.className = 'w-full max-w-4xl mx-auto rounded-xl border border-slate-800 bg-slate-900 p-5 sm:p-7';
- 
+
                     const pageHeading = document.createElement('h4');
                     pageHeading.className = 'text-sm font-bold text-blue-300 border-b border-slate-700 pb-3 mb-4';
                     pageHeading.textContent = `صفحة ${n}`;
                     pageSection.appendChild(pageHeading);
- 
+
                     await renderEditableLessonText(pageSection, url, n, pageText);
                     if (window.extractPdfPageExtras) {
                         try {
@@ -1132,36 +1132,36 @@
                 }
             }
         }
- 
+
         function openItemModal(index) {
             const it = getCurrentItems()[index];
             const badge = currentTab === 'lectures' ? 'محتوى المحاضرة' : 'محتوى السكشن والشيت';
- 
+
             document.getElementById('modalBadge').textContent = badge;
             document.getElementById('modalTitle').textContent = it.title;
             document.getElementById('contentModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
- 
+
             renderToken++;
             renderPdf(it.file, document.getElementById('modalBody'), renderToken);
         }
- 
+
         function closeContentModal() {
             renderToken++;
             document.getElementById('contentModal').classList.add('hidden');
             document.getElementById('modalBody').innerHTML = '';
             document.body.style.overflow = '';
         }
- 
+
         function changeLessonTextSize(step) {
             lessonTextSize = Math.min(22, Math.max(14, lessonTextSize + step * 2));
             localStorage.setItem('study-site-lesson-text-size', String(lessonTextSize));
             document.querySelectorAll('.lesson-copy').forEach(content => content.style.setProperty('--lesson-font-size', `${lessonTextSize}px`));
         }
- 
+
         function openAboutModal() { document.getElementById('aboutModal').classList.remove('hidden'); }
         function closeAboutModal() { document.getElementById('aboutModal').classList.add('hidden'); }
- 
+
         function openMaterialsModal() {
             const listEl = document.getElementById('materialsListModal');
             listEl.innerHTML = '';
@@ -1185,14 +1185,14 @@
             document.getElementById('materialsModal').classList.remove('hidden');
         }
         function closeMaterialsModal() { document.getElementById('materialsModal').classList.add('hidden'); }
- 
+
         function clearGlobalSearch() {
             const input = document.getElementById('globalSearchInput');
             input.value = '';
             performGlobalSearch();
             input.focus();
         }
- 
+
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             const toggle = document.getElementById('mobileMenuToggle');
@@ -1200,7 +1200,7 @@
             toggle.setAttribute('aria-expanded', String(isOpen));
             toggle.setAttribute('aria-label', isOpen ? 'إغلاق القائمة' : 'فتح القائمة');
         }
- 
+
         function setTheme(isLight) {
             document.body.classList.toggle('light-theme', isLight);
             const toggle = document.getElementById('themeToggle');
@@ -1210,27 +1210,26 @@
             toggle.setAttribute('aria-pressed', String(isLight));
             toggle.innerHTML = `<i class="fa-solid ${isLight ? 'fa-moon' : 'fa-sun'} text-lg" aria-hidden="true"></i>`;
         }
- 
+
         function toggleTheme() {
             const isLight = !document.body.classList.contains('light-theme');
             localStorage.setItem('study-site-light-theme', String(isLight));
             setTheme(isLight);
         }
- 
+
         setTheme(localStorage.getItem('study-site-light-theme') === 'true');
- 
+
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') { closeContentModal(); closeAboutModal(); closeMaterialsModal(); }
         });
- 
+
         document.getElementById('globalSearchInput').addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
                 performGlobalSearch();
             }
         });
- 
+
         window.onload = renderHome;
     </script>
 </body>
 </html>
- 
